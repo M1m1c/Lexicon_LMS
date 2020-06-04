@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Lexicon_LMS.Models
 {
-    public class Activity
+    public class CourseActivity
     {
         public int Id { get; set; }
         public string ActivityName { get; set; }
