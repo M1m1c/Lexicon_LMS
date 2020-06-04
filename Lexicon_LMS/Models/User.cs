@@ -10,7 +10,7 @@ namespace Lexicon_LMS.Models
     {
         public int Age { get; set; }
               
-        public int CourseId { get; set; }
+        public int? CourseId { get; set; }
 
         public Course Course { get; set; }
         public ICollection<Document> Documents { get; set; }
