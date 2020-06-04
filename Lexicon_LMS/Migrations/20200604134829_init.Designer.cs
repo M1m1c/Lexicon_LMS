@@ -4,14 +4,16 @@ using Lexicon_LMS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Lexicon_LMS.Data.Migrations
+namespace Lexicon_LMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200604134829_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,16 +98,16 @@ namespace Lexicon_LMS.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ActivityId")
+                    b.Property<int?>("ActivityId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CourseId")
+                    b.Property<int?>("CourseId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ModuleId")
+                    b.Property<int?>("ModuleId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -114,10 +116,7 @@ namespace Lexicon_LMS.Data.Migrations
                     b.Property<DateTime>("UploadDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -128,7 +127,7 @@ namespace Lexicon_LMS.Data.Migrations
 
                     b.HasIndex("ModuleId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Documents");
                 });
@@ -389,25 +388,19 @@ namespace Lexicon_LMS.Data.Migrations
                 {
                     b.HasOne("Lexicon_LMS.Models.CourseActivity", "Activity")
                         .WithMany("Documents")
-                        .HasForeignKey("ActivityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ActivityId");
 
                     b.HasOne("Lexicon_LMS.Models.Course", "Course")
                         .WithMany("Documents")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CourseId");
 
                     b.HasOne("Lexicon_LMS.Models.Module", "Module")
                         .WithMany("Documents")
-                        .HasForeignKey("ModuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ModuleId");
 
                     b.HasOne("Lexicon_LMS.Models.User", "User")
                         .WithMany("Documents")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Lexicon_LMS.Models.Module", b =>

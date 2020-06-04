@@ -12,10 +12,10 @@ namespace Lexicon_LMS.Models
         public string Description { get; set; }
         public DateTime UploadDate { get; set; }
 
-        public int UserId { get; set; }
-        public int CourseId { get; set; }
-        public int ModuleId { get; set; }
-        public int ActivityId { get; set; }
+        public string UserId { get; set; }
+        public int? CourseId { get; set; }
+        public int? ModuleId { get; set; }
+        public int? ActivityId { get; set; }
 
         public User User { get; set; }
         public Course Course { get; set; }
