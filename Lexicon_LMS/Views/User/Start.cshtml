@@ -1,38 +1,14 @@
-﻿@*@model Lexicon_LMS.Models.Course*@
-
+﻿
 @{
     ViewData["Title"] = "StartPage";
 }
 
 <h1>@User.Identity.Name</h1>
 
+@* TODO Add check to see if user is teacher or student, show apropriate partial view depending on case*@
 <partial name="~/Views/Teacher/TeacherStartPartial.cshtml" />
 
-@*<div>
-    <h4>Course</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CourseName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>*@
+
+
+
+
