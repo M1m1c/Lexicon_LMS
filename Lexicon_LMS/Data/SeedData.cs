@@ -44,7 +44,7 @@ namespace Lexicon_LMS.Data
 
                 };
 
-                var addUserResult = await userManager.CreateAsync(user);
+                var addUserResult = await userManager.CreateAsync(user,"Abc12#");
 
                 if (!addUserResult.Succeeded) throw new Exception(string.Join("\n", addUserResult.Errors));
 
