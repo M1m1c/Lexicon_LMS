@@ -3,7 +3,7 @@
     ViewData["Title"] = "StartPage";
 }
 
-<h1>@User.Identity.Name</h1>
+<h1>Welcome @User.Identity.Name </h1>
 
 @* TODO Add check to see if user is teacher or student, show apropriate partial view depending on case*@
 <partial name="~/Views/Teacher/TeacherStartPartial.cshtml" />

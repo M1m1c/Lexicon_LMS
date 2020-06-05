@@ -49,13 +49,13 @@ namespace Lexicon_LMS.Data
                 if (!addUserResult.Succeeded) throw new Exception(string.Join("\n", addUserResult.Errors));
 
 
-                var adminUser = await userManager.FindByNameAsync(teacherEmail);
+                var teacherUser = await userManager.FindByNameAsync(teacherEmail);
 
                 foreach (var role in roleNames)
                 {
-                    if (await userManager.IsInRoleAsync(adminUser, role)) continue;
+                    if (await userManager.IsInRoleAsync(teacherUser, role)) continue;
 
-                    var addToRoleResult = await userManager.AddToRoleAsync(adminUser, role);
+                    var addToRoleResult = await userManager.AddToRoleAsync(teacherUser, role);
 
                     if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
                 }
