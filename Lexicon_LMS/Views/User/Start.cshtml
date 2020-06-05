@@ -5,8 +5,16 @@
 
 <h1>@User.Identity.Name</h1>
 
-@* TODO Add check to see if user is teacher or student, show apropriate partial view depending on case*@
-<partial name="~/Views/Teacher/TeacherStartPartial.cshtml" />
+@if (User.IsInRole("Teacher"))
+{
+    <partial name="~/Views/Teacher/TeacherStartPartial.cshtml" />
+}
+else if (User.IsInRole("Student"))
+{
+    <partial name="~/Views/Student/StudentStartPartial.cshtml" />
+}
+
+
 
 
 
