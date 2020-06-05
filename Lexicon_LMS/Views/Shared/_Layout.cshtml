@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -17,13 +19,35 @@
                         <img style="width:110px; height:38px" src="~/img/logo-lexicon.gif" />
                     </a>
                 </picture>
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Lexicon_LMS</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <partial name="_LoginPartial" />
+
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        @if (User.IsInRole("Teacher"))
+                        {
+                            <partial name="_TeacherLayoutPartial" />
+                        }
+                        else if (User.IsInRole("Student"))
+                        {
+                            <partial name="_StudentLayoutPartial" />
+                        }
+                    }
+                    else
+                    {
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            </li>
+                        </ul>
+                    }
                 </div>
             </div>
         </nav>
