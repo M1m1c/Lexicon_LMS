@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
-    <Folder Include="Views\StudentViews\" />
+    <Folder Include="Views\Student\" />
   </ItemGroup>
 
 </Project>
