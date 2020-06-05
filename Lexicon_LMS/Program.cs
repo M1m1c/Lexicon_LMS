@@ -31,8 +31,8 @@ namespace Lexicon_LMS
                 }
                 catch (Exception ex)
                 {
-
-                    throw;
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                   logger.LogError(ex.Message, "Seed fail");
                 }
             }
 
