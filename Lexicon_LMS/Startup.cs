@@ -13,6 +13,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Lexicon_LMS.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using AutoMapper;
+using Lexicon_LMS.Repositories;
 
 namespace Lexicon_LMS
 {
@@ -36,6 +40,10 @@ namespace Lexicon_LMS
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddAutoMapper(typeof(MapperProfile));
+         
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

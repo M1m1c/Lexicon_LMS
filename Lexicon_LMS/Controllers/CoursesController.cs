@@ -7,16 +7,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Lexicon_LMS.Data;
 using Lexicon_LMS.Models;
+using Lexicon_LMS.ViewModels;
+using AutoMapper;
+using Lexicon_LMS.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lexicon_LMS.Controllers
 {
     public class CoursesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CoursesController(ApplicationDbContext context)
+        public CoursesController(ApplicationDbContext context, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _context = context;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: Courses
@@ -53,16 +61,18 @@ namespace Lexicon_LMS.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CourseName,Description,StartDate")] Course course)
+        public async Task<IActionResult> Create(CourseCreateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(course);
-                await _context.SaveChangesAsync();
+                var course = _mapper.Map<Course>(model);
+                _unitOfWork.CourseRepository.Add(course);
+                await _unitOfWork.CompleateAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            return View(model);
         }
 
         // GET: Courses/Edit/5
