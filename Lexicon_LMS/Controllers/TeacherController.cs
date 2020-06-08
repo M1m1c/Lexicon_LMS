@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Lexicon_LMS.Data;
 using Lexicon_LMS.Models;
 using Lexicon_LMS.Models.ViewModels;
@@ -17,12 +18,14 @@ namespace Lexicon_LMS.Controllers
         private readonly ApplicationDbContext context;
         private readonly UserManager<User> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IMapper mapper;
 
-        public TeacherController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public TeacherController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper)
         {
             this.context = context;
             this.userManager = userManager;
             this.roleManager = roleManager;
+            this.mapper = mapper;
         }
 
         //TODO map to view model instead of doing mannually here
@@ -32,18 +35,14 @@ namespace Lexicon_LMS.Controllers
             var users = await context.Users.ToListAsync();
             var currentUserId = userManager.GetUserId(User);
 
+            var models = mapper.Map<IEnumerable<UserViewModel>>(users.Where(q => q.Id != currentUserId));
 
-            var model = users.Where(q => q.Id != currentUserId).Select(u => new UserViewModel
+            foreach (var m in models)
             {
-                Id = u.Id,
-                Age = u.Age,
-                Email = u.Email,
-                FirstName = u.FirstName,
-                LastName = u.LastName,
-                Role = context.Roles.Find(context.UserRoles.FirstOrDefault(ur => ur.UserId == u.Id).RoleId).Name
-            });
- 
-            return View(model);
+                m.Role = context.Roles.Find(context.UserRoles.FirstOrDefault(ur => ur.UserId == m.Id).RoleId).Name;
+            }
+
+            return View(models);
         }
 
         [Authorize(Roles = "Teacher")]
@@ -53,7 +52,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles ="Teacher")]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> CreateUser(UserViewModel userViewModel)
         {
             if (ModelState.IsValid)
@@ -82,11 +81,146 @@ namespace Lexicon_LMS.Controllers
 
                     if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
 
-                    return RedirectToAction("Index","Home");
+                    return RedirectToAction("Index", "Home");
                 }
-               
+
             }
             return View();
+        }
+
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> UserDetails(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await context.Users
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var model = mapper.Map<UserViewModel>(user);
+            model.Role = context.Roles.Find(context.UserRoles.FirstOrDefault(ur => ur.UserId == model.Id).RoleId).Name;
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> EditUser(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var model = mapper.Map<EditUserViewModel>(user);
+            model.Role = context.Roles.Find(context.UserRoles.FirstOrDefault(ur => ur.UserId == model.Id).RoleId).Name;
+            return View(model);
+        }
+
+        // POST: Courses/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> EditUser(string id, [Bind("Age,FirstName,LastName,Role")] EditUserViewModel editUserVM)
+        {
+            if (!context.Users.Any(u => u.Id == id))
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                var user = await context.Users.FindAsync(id);
+                user.FirstName = editUserVM.FirstName;
+                user.LastName = editUserVM.LastName;
+                user.Age = editUserVM.Age;
+
+                var role = await roleManager.FindByNameAsync(editUserVM.Role);
+                if (role != null) 
+                {
+                    try
+                    {
+                        context.Update(user);
+                       
+                        if (!await userManager.IsInRoleAsync(user, role.Name))
+                        {
+                            var addToRoleResult = await userManager.AddToRoleAsync(user, role.Name);
+
+                            if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                        }
+
+                        var test = await userManager.GetRolesAsync(user);
+                        if ( test.Count > 1) 
+                        {
+                            await userManager.RemoveFromRolesAsync(user, test.Where(t => t != role.Name));
+                        }
+
+                        await context.SaveChangesAsync();
+
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!UserExists(user.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Users));
+                }
+            }
+            return View(editUserVM);
+        }
+        private bool UserExists(string id)
+        {
+            return context.Users.Any(e => e.Id == id);
+        }
+
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await context.Users
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var model = mapper.Map<UserViewModel>(user);
+            model.Role = context.Roles.Find(context.UserRoles.FirstOrDefault(ur => ur.UserId == model.Id).RoleId).Name;
+
+            return View(model);
+        }
+
+        [HttpPost, ActionName("DeleteUser")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> DeleteUserConfirmed(string id)
+        {
+            var user = await context.Users.FindAsync(id);
+            context.Users.Remove(user);
+            await context.SaveChangesAsync();
+            return RedirectToAction(nameof(Users));
         }
     }
 }
