@@ -11,6 +11,7 @@ using Lexicon_LMS.ViewModels;
 using AutoMapper;
 using Lexicon_LMS.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Lexicon_LMS.ViewModels.Courses;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -30,7 +31,16 @@ namespace Lexicon_LMS.Controllers
         // GET: Courses
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Courses.ToListAsync());
+            var model = _context.Courses
+                    .Select(c => new CourseIndexViewModel
+                    {
+                        Id = c.Id,
+                        CourseName = c.CourseName,
+                        Description = c.Description,
+                        StartDate = c.StartDate
+                    });
+
+            return View(await model.ToListAsync());
         }
 
         // GET: Courses/Details/5
@@ -40,15 +50,15 @@ namespace Lexicon_LMS.Controllers
             {
                 return NotFound();
             }
-
-            var course = await _context.Courses
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (course == null)
+            var model = await _unitOfWork.CourseRepository.GetDetailsViewModelAsync(id);
+        //    var course = await _context.Courses
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+           if (model == null)
             {
                 return NotFound();
             }
 
-            return View(course);
+            return View(model);
         }
 
         // GET: Courses/Create

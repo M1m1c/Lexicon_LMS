@@ -2,6 +2,7 @@
 using Lexicon_LMS.Models;
 using Lexicon_LMS.Models.ViewModels;
 using Lexicon_LMS.ViewModels;
+using Lexicon_LMS.ViewModels.Courses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace Lexicon_LMS
         public MapperProfile()
         {
             CreateMap<CourseCreateViewModel, Course>();
+            CreateMap<Course, CourseDetailsViewModel>();
             CreateMap<User, UserViewModel>();
             CreateMap<User, EditUserViewModel>();
         }
