@@ -8,6 +8,9 @@ namespace Lexicon_LMS.Models.ViewModels
 {
     public class UserViewModel
     {
+        [Key]
+        public string Id { get; set; }
+
         [Required]
         public int Age { get; set; }
 
