@@ -1,4 +1,6 @@
 ﻿@model Lexicon_LMS.ViewModels.Courses.CourseDetailsViewModel
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
 
 @{
     ViewData["Title"] = "Details";
@@ -42,22 +44,32 @@
             </div>
         </div>
     </div>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        @if (User.IsInRole("Teacher"))
+        {
+            <div class="row mt-5 mb-5">
+                <div class="col-sm-12">
+                    <button class="btn-primary mr-3">Add Module</button>
+                    <button class="btn-primary mr-3">Add Participant</button>
+                    <button class="btn-primary mr-3">Add Course Files</button>
 
-    <div class="row mt-5 mb-5">
-        <div class="col-sm-12">
-            <button class="btn-primary mr-3">Add Module</button>
-            <button class="btn-primary mr-3">Add Participant</button>
-            <button class="btn-primary mr-3">Add Course Files</button>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+
+@if (SignInManager.IsSignedIn(User))
+{
+    @if (User.IsInRole("Teacher"))
+    {
+        <div>
+            <a class="btn btn-info" asp-action="Index">All Courses</a>
+            <a class="btn btn-danger float-right" asp-action="delete">Delete Course</a>
+            <a class="btn btn-warning float-right mr-2" asp-action="edit">Edit Course</a>
 
         </div>
-    </div>
-</div>
-
-
-
-<div>
-    <a class="btn btn-info" asp-action="Index">All Courses</a>
-    <a class="btn btn-danger float-right" asp-action="delete">Delete Course</a>
-    <a class="btn btn-warning float-right mr-2" asp-action="edit">Edit Course</a>
-
-</div>
+     }
+}
