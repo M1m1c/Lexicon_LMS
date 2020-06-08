@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Lexicon_LMS.Models;
+using Lexicon_LMS.Models.ViewModels;
 using Lexicon_LMS.ViewModels;
 using Lexicon_LMS.ViewModels.Courses;
 using System;
@@ -15,6 +16,8 @@ namespace Lexicon_LMS
         {
             CreateMap<CourseCreateViewModel, Course>();
             CreateMap<Course, CourseDetailsViewModel>();
+            CreateMap<User, UserViewModel>();
+            CreateMap<User, EditUserViewModel>();
         }
 
 
