@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Lexicon_LMS.Controllers
 {
+    [Authorize(Roles = "Teacher")]
     public class CoursesController : Controller
     {
         private readonly ApplicationDbContext _context;
