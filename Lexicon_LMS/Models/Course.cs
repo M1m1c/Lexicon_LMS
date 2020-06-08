@@ -13,6 +13,7 @@ namespace Lexicon_LMS.Models
         public string Description { get; set; }
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public ICollection<Module> Modules { get; set; }
         public ICollection<User> Users { get; set; }
         public ICollection<Document> Documents { get; set; }
