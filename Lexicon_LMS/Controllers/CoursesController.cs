@@ -30,8 +30,17 @@ namespace Lexicon_LMS.Controllers
 
         // GET: Courses
         public async Task<IActionResult> Index()
-        {      
-            return View(await _context.Courses.ToListAsync());
+        {
+            var model = _context.Courses
+                    .Select(c => new CourseIndexViewModel
+                    {
+                        Id = c.Id,
+                        CourseName = c.CourseName,
+                        Description = c.Description,
+                        StartDate = c.StartDate
+                    });
+
+            return View(await model.ToListAsync());
         }
 
         // GET: Courses/Details/5
