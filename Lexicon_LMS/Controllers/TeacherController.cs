@@ -2,29 +2,48 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lexicon_LMS.Data;
 using Lexicon_LMS.Models;
 using Lexicon_LMS.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lexicon_LMS.Controllers
 {
     public class TeacherController : Controller
     {
+        private readonly ApplicationDbContext context;
         private readonly UserManager<User> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
 
-        public TeacherController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public TeacherController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
+            this.context = context;
             this.userManager = userManager;
             this.roleManager = roleManager;
         }
 
-       
-        public IActionResult Index()
+        //TODO map to view model instead of doing mannually here
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Users()
         {
-            return View();
+            var users = await context.Users.ToListAsync();
+            var currentUserId = userManager.GetUserId(User);
+
+
+            var model = users.Where(q => q.Id != currentUserId).Select(u => new UserViewModel
+            {
+                Id = u.Id,
+                Age = u.Age,
+                Email = u.Email,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Role = context.Roles.Find(context.UserRoles.FirstOrDefault(ur => ur.UserId == u.Id).RoleId).Name
+            });
+ 
+            return View(model);
         }
 
         [Authorize(Roles = "Teacher")]
