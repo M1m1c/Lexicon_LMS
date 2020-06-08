@@ -11,6 +11,7 @@ namespace Lexicon_LMS.Models
         public int Id { get; set; }
         public string CourseName { get; set; }
         public string Description { get; set; }
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime StartDate { get; set; }
         public ICollection<Module> Modules { get; set; }
         public ICollection<User> Users { get; set; }
