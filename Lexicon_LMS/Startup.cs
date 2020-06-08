@@ -42,7 +42,7 @@ namespace Lexicon_LMS
             {
                 var policy = new AuthorizationPolicyBuilder()
                                     .RequireAuthenticatedUser()
-                                    .RequireRole("student")
+                                    .RequireRole("Student")
                                     .Build();
 
                 options.Filters.Add(new AuthorizeFilter(policy));
