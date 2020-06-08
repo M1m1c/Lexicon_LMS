@@ -2,6 +2,7 @@
 using Lexicon_LMS.Data;
 using Lexicon_LMS.Models;
 using Lexicon_LMS.ViewModels.Courses;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,9 +26,9 @@ namespace Lexicon_LMS.Repositories
             _db.Add(course);
         }
 
-        public Task<CourseDetailsViewModel> GetDetailsViewModelAsync(int id)
+        public async Task<CourseDetailsViewModel> GetDetailsViewModelAsync(int? id)
         {
-          
+            return await _mapper.ProjectTo<CourseDetailsViewModel>(_db.Courses).FirstOrDefaultAsync(model => model.Id == id);
         }
     }
 }

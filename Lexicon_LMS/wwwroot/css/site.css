@@ -69,3 +69,25 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+.course-start-label{
+    background: #B1C2FA;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 5px;
+    float: right;
+    margin-top: 20px;
+    margin-right: 50px;
+}
+.module-start-label {
+    background: #B1C2FA;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 5px;
+    float: right;
+    margin-right: 50px;
+}
+
+div.card-header button{
+    width: inherit;
+}
