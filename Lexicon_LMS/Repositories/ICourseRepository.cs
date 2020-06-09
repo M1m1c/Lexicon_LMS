@@ -1,4 +1,5 @@
 ﻿using Lexicon_LMS.Models;
+using Lexicon_LMS.ViewModels.Courses;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,6 @@ namespace Lexicon_LMS.Repositories
     public interface ICourseRepository
     {
         void Add(Course course);
-
+        Task<CourseDetailsViewModel> GetDetailsViewModelAsync(int? id);
     }
 }

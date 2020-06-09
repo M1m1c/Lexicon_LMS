@@ -11,9 +11,11 @@ using Lexicon_LMS.ViewModels;
 using AutoMapper;
 using Lexicon_LMS.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Lexicon_LMS.ViewModels.Courses;
 
 namespace Lexicon_LMS.Controllers
 {
+    [Authorize(Roles = "Teacher")]
     public class CoursesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -36,7 +38,8 @@ namespace Lexicon_LMS.Controllers
                         Id = c.Id,
                         CourseName = c.CourseName,
                         Description = c.Description,
-                        StartDate = c.StartDate
+                        StartDate = c.StartDate,
+                        EndDate = c.EndDate
                     });
 
             return View(await model.ToListAsync());
@@ -49,15 +52,15 @@ namespace Lexicon_LMS.Controllers
             {
                 return NotFound();
             }
-
-            var course = await _context.Courses
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (course == null)
+            var model = await _unitOfWork.CourseRepository.GetDetailsViewModelAsync(id);
+        //    var course = await _context.Courses
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+           if (model == null)
             {
                 return NotFound();
             }
 
-            return View(course);
+            return View(model);
         }
 
         // GET: Courses/Create
@@ -105,7 +108,7 @@ namespace Lexicon_LMS.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CourseName,Description,StartDate")] Course course)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CourseName,Description,StartDate,EndDate")] Course course)
         {
             if (id != course.Id)
             {

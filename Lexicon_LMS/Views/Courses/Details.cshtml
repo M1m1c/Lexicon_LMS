@@ -1,36 +1,75 @@
-﻿@model Lexicon_LMS.Models.Course
+﻿@model Lexicon_LMS.ViewModels.Courses.CourseDetailsViewModel
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>@Model.CourseName <span class="course-start-label">@Model.StartDate</span></h1>
 
 <div>
-    <h4>Course</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CourseName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-    </dl>
+    <div class="row">
+        <div class="col-sm-12">
+            <h5 class="mt-5">Course description</h5>
+            <p>@Model.Description</p>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="accordion" id="accordionExample">
+                @foreach (var module in Model.Modules)
+                {
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h2 class="mb-0">
+                                <span class="module-start-label">@module.StartDate - @module.EndDate</span>
+                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    @module.ModuleName
+                                </button>
+
+                            </h2>
+                        </div>
+
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body">
+                                <p>@module.Description</p>
+                                <a class="btn btn-success" asp-action="details" asp-controller="module" asp-route-id="@module.Id">Go to module</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        @if (User.IsInRole("Teacher"))
+        {
+            <div class="row mt-5 mb-5">
+                <div class="col-sm-12">
+                    <button class="btn-primary mr-3">Add Module</button>
+                    <button class="btn-primary mr-3">Add Participant</button>
+                    <button class="btn-primary mr-3">Add Course Files</button>
+
+                </div>
+            </div>
+        }
+    }
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+
+@if (SignInManager.IsSignedIn(User))
+{
+    @if (User.IsInRole("Teacher"))
+    {
+        <div>
+            <a class="btn btn-info" asp-action="Index">All Courses</a>
+            <a class="btn btn-danger float-right" asp-action="delete">Delete Course</a>
+            <a class="btn btn-warning float-right mr-2" asp-action="edit">Edit Course</a>
+
+        </div>
+     }
+}
