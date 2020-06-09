@@ -38,15 +38,7 @@ namespace Lexicon_LMS
             services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews(options =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                                    .RequireAuthenticatedUser()
-                                    .RequireRole("Student")
-                                    .Build();
-
-                options.Filters.Add(new AuthorizeFilter(policy));
-            });
+           
 
 
             services.AddRazorPages();

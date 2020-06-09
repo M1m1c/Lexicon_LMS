@@ -28,7 +28,6 @@ namespace Lexicon_LMS.Controllers
             this.mapper = mapper;
         }
 
-        //TODO map to view model instead of doing mannually here
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Users()
         {
@@ -80,6 +79,12 @@ namespace Lexicon_LMS.Controllers
                     var addToRoleResult = await userManager.AddToRoleAsync(addedUser, role.Name);
 
                     if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
+
+                    if (role.Name == "Student")
+                    {
+                        //TODO make sure that this redirects to an existing action and controller
+                        return RedirectToAction("AssignToCourse", addedUser.Id);
+                    }
 
                     return RedirectToAction("Index", "Home");
                 }
