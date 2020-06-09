@@ -50,7 +50,7 @@
         {
             <div class="row mt-5 mb-5">
                 <div class="col-sm-12">
-                    <button class="btn-primary mr-3">Add Module</button>
+                    <a asp-controller="Module" asp-action="ModuleCreate" asp-route-CourseId="@Model.Id" class=" btn btn-primary mr-3">Add Module</a>
                     <button class="btn-primary mr-3">Add Participant</button>
                     <button class="btn-primary mr-3">Add Course Files</button>
 
