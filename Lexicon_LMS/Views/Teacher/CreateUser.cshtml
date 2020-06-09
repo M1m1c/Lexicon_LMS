@@ -42,10 +42,11 @@
                 <input asp-for="ConfirmPassword" class="form-control" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
-            @* TODO Turn this into a drop down menu showing the role names available *@
             <div class="form-group">
                 <label asp-for="Role" class="control-label"></label>
-                <input asp-for="Role" class="form-control" />
+                <div class="col-md-5">
+                    @Html.DropDownListFor(m => m.Role, Model.Roles)
+                </div>
                 <span asp-validation-for="Role" class="text-danger"></span>
             </div>
             <div class="form-group">

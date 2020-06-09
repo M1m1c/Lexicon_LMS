@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,7 +9,6 @@ namespace Lexicon_LMS.Models.ViewModels
 {
     public class EditUserViewModel
     {
-        [Key]
         public string Id { get; set; }
 
         [Required]
@@ -22,6 +22,7 @@ namespace Lexicon_LMS.Models.ViewModels
 
         [Required]
         public string Role { get; set; }
+        public IEnumerable<SelectListItem> Roles { get; set; }
 
     }
 }

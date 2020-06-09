@@ -9,6 +9,7 @@ using Lexicon_LMS.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lexicon_LMS.Controllers
@@ -44,10 +45,15 @@ namespace Lexicon_LMS.Controllers
             return View(models);
         }
 
+        private List<SelectListItem> GetRolesForDropDown()
+        {
+            return context.Roles.ToList().Select(r => new SelectListItem { Value = r.Name, Text = r.Name }).ToList(); ;
+        }
+
         [Authorize(Roles = "Teacher")]
         public IActionResult CreateUser()
         {
-            return View();
+            return View(new UserViewModel { Roles = GetRolesForDropDown() });
         }
 
         [HttpPost]
@@ -86,7 +92,7 @@ namespace Lexicon_LMS.Controllers
                         return RedirectToAction("AssignToCourse", addedUser.Id);
                     }
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction(nameof(Users));
                 }
 
             }
@@ -129,6 +135,7 @@ namespace Lexicon_LMS.Controllers
             }
             var model = mapper.Map<EditUserViewModel>(user);
             model.Role = context.Roles.Find(context.UserRoles.FirstOrDefault(ur => ur.UserId == model.Id).RoleId).Name;
+            model.Roles = GetRolesForDropDown();
             return View(model);
         }
 
@@ -213,7 +220,6 @@ namespace Lexicon_LMS.Controllers
 
             var model = mapper.Map<UserViewModel>(user);
             model.Role = context.Roles.Find(context.UserRoles.FirstOrDefault(ur => ur.UserId == model.Id).RoleId).Name;
-
             return View(model);
         }
 
