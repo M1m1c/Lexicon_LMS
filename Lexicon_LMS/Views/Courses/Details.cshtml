@@ -67,8 +67,8 @@
     {
         <div>
             <a class="btn btn-info" asp-action="Index">All Courses</a>
-            <a class="btn btn-danger float-right" asp-action="delete">Delete Course</a>
-            <a class="btn btn-warning float-right mr-2" asp-action="edit">Edit Course</a>
+            <a class="btn btn-danger float-right" asp-action="Delete" asp-route-id="@Model.Id">Delete Course</a>
+            <a class="btn btn-warning float-right mr-2" asp-action="Edit" asp-route-id="@Model.Id">Edit Course</a>
 
         </div>
      }
