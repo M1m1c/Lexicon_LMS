@@ -13,6 +13,7 @@ namespace Lexicon_LMS.ViewModels.Courses
         public string CourseName { get; set; }
         
         [StringLength(1000)]
+        [Display(Name = "Level")]
         public string Description { get; set; }
         
         [Required]
