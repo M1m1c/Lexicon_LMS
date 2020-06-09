@@ -30,6 +30,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Courses
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Index()
         {
             var model = _context.Courses
@@ -63,6 +64,7 @@ namespace Lexicon_LMS.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Teacher")]
         // GET: Courses/Create
         public IActionResult Create()
         {
@@ -73,7 +75,7 @@ namespace Lexicon_LMS.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-
+        [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CourseCreateViewModel model)
         {
@@ -107,6 +109,7 @@ namespace Lexicon_LMS.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CourseName,Description,StartDate,EndDate")] Course course)
         {
@@ -133,12 +136,13 @@ namespace Lexicon_LMS.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details),new { id });
             }
             return View(course);
         }
 
         // GET: Courses/Delete/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -158,6 +162,7 @@ namespace Lexicon_LMS.Controllers
 
         // POST: Courses/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
