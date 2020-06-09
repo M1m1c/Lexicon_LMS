@@ -6,7 +6,7 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>@Model.CourseName <span class="course-start-label">@Model.StartDate</span></h1>
+<h1>@Model.CourseName <span class="course-start-label">@Model.StartDate.ToShortDateString()</span></h1>
 
 <div>
     <div class="row">
@@ -25,7 +25,7 @@
                     <div class="card">
                         <div class="card-header" id="headingOne">
                             <h2 class="mb-0">
-                                <span class="module-start-label">@module.StartDate - @module.EndDate</span>
+                                <span class="module-start-label">@module.StartDate.ToShortDateString() - @module.EndDate.ToShortDateString() </span>
                                 <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                     @module.ModuleName
                                 </button>
@@ -51,7 +51,7 @@
             <div class="row mt-5 mb-5">
                 <div class="col-sm-12">
                     <a asp-controller="Module" asp-action="ModuleCreate" asp-route-CourseId="@Model.Id" class=" btn btn-primary mr-3">Add Module</a>
-                    <button class="btn-primary mr-3">Add Participant</button>
+                    <a asp-action="AddParticipant" class="btn-primary mr-3">Add Participant</a>
                     <button class="btn-primary mr-3">Add Course Files</button>
 
                 </div>
