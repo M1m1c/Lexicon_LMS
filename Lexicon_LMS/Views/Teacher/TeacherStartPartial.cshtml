@@ -7,26 +7,100 @@
     <div class="col-sm-12">
         <a asp-controller="Courses" asp-action="Create" class="btn btn-primary mr-3">Add Course</a>
     </div>
-    <h5>Ongoing Courses</h5>
-    <br />  
-    <div class="col-sm-6 table">
-        <ul>
-            @if (Model != null)
-            {
-                @if (Model.OnGoingCourses.Count > 0)
+</div>
+<hr />
+
+<div class="  row justify-content-around">
+    <div class="col-6">
+        <h5>Current Courses</h5>
+        <hr />
+        <div class="backcard border-success">
+            <ul>
+                @if (Model != null)
                 {
-
-
-                    @foreach (var item in Model.OnGoingCourses)
+                    @if (Model.OnGoingCourses.Count > 0)
                     {
-                        <li>
-                            <h5> <a asp-controller="Courses" asp-action="Details" asp-route-id="@item.Id">@item.CourseName</a></h5>
-                        </li>
+                        @foreach (var item in Model.OnGoingCourses)
+                        {
+                            <li>
+                                <h5> <a asp-controller="Courses" asp-action="Details" asp-route-id="@item.Id">@item.CourseName</a></h5>
+                            </li>
+                        }
                     }
                 }
-            }
+            </ul>
+        </div>
+    </div>
+    <div class="col-6">
+        <h5>Future Courses</h5>
+        <hr />
+        <div class="backcard border-success ">
+            <ul>
+                @if (Model != null)
+                {
+                    @if (Model.futureCourses.Count > 0)
+                    {
+                        @foreach (var item in Model.futureCourses)
+                        {
+                            <li>
+                                <h5> <a asp-controller="Courses" asp-action="Details" asp-route-id="@item.Id">@item.CourseName</a></h5>
+                            </li>
+                        }
+                    }
+                }
+            </ul>
+        </div>
+    </div>
 
-
-        </ul>
+</div>
+<hr />
+<div class="  row justify-content-around">
+    <div class="col-6">
+        <h5>Past Courses</h5>
+        <hr />
+        <div class="backcard border-danger">
+            <ul>
+                @if (Model != null)
+                {
+                    @if (Model.pastCourses.Count > 0)
+                    {
+                        @foreach (var item in Model.pastCourses)
+                        {
+                            <li>
+                                <h5> <a asp-controller="Courses" asp-action="Details" asp-route-id="@item.Id">@item.CourseName</a></h5>
+                            </li>
+                        }
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="col-6">
+        <h5>Submitted Assignments</h5>
+        <hr />
+        <div class="backcard border-success">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Course Name
+                        </th>
+                        <th>
+                           Module
+                        </th>
+                        <th>
+                            Activity
+                        </th>
+                        <th>
+                            Submittion Time
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

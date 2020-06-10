@@ -14,12 +14,40 @@ table {
     background-color: rgba(212, 212, 212, 0.61);
 }
 
-.card {
-    box-shadow: 0 3px 15px rgba(51, 51, 51, 0.2);
-    background-color: rgba(255, 255, 255, 0.58);
-    border-radius: 3%;
+.section .row .col-md-8 {
+    margin-right: -20%;
+    padding: 1%;
 }
 
+.section .row .col-md-6 {
+    margin-right: -20%;
+    padding: 1%;
+}
+
+.section .row .col-md-4 {
+    margin-right: -20%;
+    padding: 1%;
+}
+
+.section .row .col-md-3 {
+    margin-right: -20%;
+    padding: 1%;
+}
+
+.backcard {
+    box-shadow: 0 3px 15px rgba(51, 51, 51, 0.2);
+    border-bottom-right-radius: 5%;
+    border-top-right-radius: 5%;
+    margin-left: -2%;
+    padding: 0.31%;
+}
+
+.machine .row .col-md-3 {
+    box-shadow: 0 3px 15px rgba(51, 51, 51, 0.2);
+    border-radius: 25px;
+    text-align: center;
+    margin: 4%;
+}
 .footer {
     background-color: rgba(255, 255, 255, 0.58);
     border-radius: 3%;

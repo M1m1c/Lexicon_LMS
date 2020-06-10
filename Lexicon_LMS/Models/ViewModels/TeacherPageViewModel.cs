@@ -8,5 +8,8 @@ namespace Lexicon_LMS.Models.ViewModels
     public class TeacherPageViewModel
     {
         public List<Course> OnGoingCourses { get; set; }
+        public List<Course> pastCourses { get; set; }
+        public List<Course> futureCourses { get; set; }
+
     }
 }

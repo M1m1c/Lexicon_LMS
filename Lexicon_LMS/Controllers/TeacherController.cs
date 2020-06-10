@@ -238,10 +238,14 @@ namespace Lexicon_LMS.Controllers
         public  IActionResult TeacherStartPartial()
         {
              var today = DateTime.Now;
-            IQueryable<Course> courses = context.Courses.Where(c => c.StartDate <= today && c.EndDate > today);
+            IQueryable<Course> onGoing = context.Courses.Where(c => c.StartDate <= today && c.EndDate > today);
+            IQueryable<Course> past = context.Courses.Where(c => c.EndDate < today);
+            IQueryable<Course> future = context.Courses.Where(c => c.StartDate >= today);
             var viewModel = new TeacherPageViewModel
             {
-                OnGoingCourses = courses?.ToList()
+                OnGoingCourses = onGoing?.ToList(),
+                pastCourses = past?.ToList(),
+                futureCourses = future?.ToList()
             };
             return View(viewModel);
         }
