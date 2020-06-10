@@ -39,9 +39,13 @@
     </div>
 </div>
 
-<div>
+@*<div>
     <a asp-action="Index">Back to List</a>
-</div>
+</div>*@
+
+<a asp-action="Index">
+    <input type="submit" value="Back" class="btn btn-warning" />
+</a>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
