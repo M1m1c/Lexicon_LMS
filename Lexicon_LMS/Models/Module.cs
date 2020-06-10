@@ -9,6 +9,7 @@ namespace Lexicon_LMS.Models
     public class Module
     {
         public int Id { get; set; }
+
         public string ModuleName { get; set; }
         public string Description { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
