@@ -233,5 +233,17 @@ namespace Lexicon_LMS.Controllers
             await context.SaveChangesAsync();
             return RedirectToAction(nameof(Users));
         }
+
+        [Authorize(Roles = "Teacher")]
+        public  IActionResult TeacherStartPartial()
+        {
+             var today = DateTime.Now;
+            IQueryable<Course> courses = context.Courses.Where(c => c.StartDate <= today && c.EndDate > today);
+            var viewModel = new TeacherPageViewModel
+            {
+                OnGoingCourses = courses?.ToList()
+            };
+            return View(viewModel);
+        }
     }
 }
