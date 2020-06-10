@@ -5,6 +5,10 @@
     <UserSecretsId>aspnet-Lexicon_LMS-55DBCEFC-E840-4345-8253-BB555B28292B</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="ViewModels\TeacherPageViewModel.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
