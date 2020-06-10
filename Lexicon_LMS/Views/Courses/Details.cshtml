@@ -36,7 +36,11 @@
                         <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                             <div class="card-body">
                                 <p>@module.Description</p>
-                                <a class="btn btn-success" asp-action="details" asp-controller="module" asp-route-id="@module.Id">Go to module</a>
+                                <a class="btn btn-success" asp-action="Create" asp-controller="Activity" asp-route-moduleId="@module.Id">Add activity</a>
+                                @if (module.Activities != null && module.Activities.Count() > 0)
+                                {
+                                    <partial name="~/Views/Activity/ActivityListPartial.cshtml" for="@module.Activities" />
+                                }
                             </div>
                         </div>
                     </div>
@@ -71,5 +75,5 @@
             <a class="btn btn-warning float-right mr-2" asp-action="Edit" asp-route-id="@Model.Id">Edit Course</a>
 
         </div>
-     }
+    }
 }
