@@ -1,4 +1,4 @@
-﻿@model Lexicon_LMS.Models.CourseActivity
+﻿@model Lexicon_LMS.Models.ViewModels.CourseActivityViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -34,7 +34,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="ActivityTypeId" class="control-label"></label>
-                <input asp-for="ActivityTypeId" class="form-control" />
+                <div class="col-md-5">
+                    @Html.DropDownListFor(m => m.ActivityTypeId, Model.ActivityTypes)
+                </div>
                 <span asp-validation-for="ActivityTypeId" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="ModuleId" />
