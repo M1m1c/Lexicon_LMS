@@ -2,20 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Lexicon_LMS.Data;
 using Lexicon_LMS.Models;
+using Lexicon_LMS.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Lexicon_LMS.Controllers
 {
     public class ActivityController : Controller
     {
         private readonly ApplicationDbContext context;
-        public ActivityController(ApplicationDbContext context)
+        private readonly IMapper mapper;
+        public ActivityController(ApplicationDbContext context, IMapper mapper)
         {
             this.context = context;
+            this.mapper = mapper;
         }
         // GET: Activity
         public ActionResult Index()
@@ -29,14 +34,25 @@ namespace Lexicon_LMS.Controllers
             return View();
         }
 
+        private List<SelectListItem> GetActivityTypesForDropDown()
+        {          
+            return context.ActivityTypes.ToList().Select(r => new SelectListItem { Value = r.Id.ToString(), Text = r.Name }).ToList(); ;
+        }
+
         // GET: Activity/Create
+        [Authorize(Roles = "Teacher")]
         public ActionResult Create(int? moduleId)
         {
             if (context.Modules.Find(moduleId) == null) 
             {
                 return NotFound();
             }
-            var courseActivity = new CourseActivity { ModuleId = (int)moduleId };
+            var courseActivity = new CourseActivityViewModel
+            {
+                ModuleId = (int)moduleId,
+                ActivityTypes = GetActivityTypesForDropDown()
+                
+            };
             return View(courseActivity);
         }
 
@@ -44,17 +60,20 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Teacher")]
-        public async Task<IActionResult> Create([Bind("ActivityName,ActivityDescription,StartDate,EndDate,ActivityTypeId,ModuleId")]CourseActivity courseActivity)
+        public async Task<IActionResult> Create([Bind("ActivityName,ActivityDescription,StartDate,EndDate,ActivityTypeId,ModuleId")]CourseActivityViewModel courseActivity)
         {
             if (ModelState.IsValid)
             {
                 var module = context.Modules.Find(courseActivity.ModuleId);
+                var activity = mapper.Map<CourseActivity>(courseActivity);
+                activity.ActivityTypeId = int.Parse(courseActivity.ActivityTypeId);
+
                 if (module != null)
                 {                 
                     try
                     {
-                        context.Activities.Add(courseActivity);
-                        module.Activities.Add(courseActivity);
+                        context.Activities.Add(activity);
+                        module.Activities.Add(activity);
                         await context.SaveChangesAsync();
 
                         return RedirectToAction(nameof(Details), "Courses", new { Id = module.CourseId });
