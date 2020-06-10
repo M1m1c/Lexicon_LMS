@@ -10,18 +10,22 @@
     <h5>Ongoing Courses</h5>
     <div class="col-sm-6">
         <ul>
-            @if (Model.OnGoingCourses != null)
+            @if (Model != null)
             {
-
-
-                @foreach (var item in Model.OnGoingCourses)
+                @if (Model.OnGoingCourses.Count > 0)
                 {
-                    <li>
-                        <h5> <a asp-controller="Courses" asp-action="Details" asp-route-id="@item.Id">@item.CourseName</a></h5>
-                    </li>
+
+
+                    @foreach (var item in Model.OnGoingCourses)
+                    {
+                        <li>
+                            <h5> <a asp-controller="Courses" asp-action="Details" asp-route-id="@item.Id">@item.CourseName</a></h5>
+                        </li>
+                    }
                 }
             }
 
-    </ul>
+
+        </ul>
     </div>
 </div>
