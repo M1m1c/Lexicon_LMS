@@ -20,32 +20,34 @@
     <div class="row">
         <div class="col-md-12">
             <div class="accordion" id="accordionExample">
-                @foreach (var module in Model.Modules)
-                {
-                    <div class="card">
-                        <div class="card-header" id="headingOne">
-                            <h2 class="mb-0">
-                                <span class="module-start-label">@module.StartDate.ToShortDateString() - @module.EndDate.ToShortDateString() </span>
-                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    @module.ModuleName
-                                </button>
+                @{int i = 0; }
+                    @foreach (var module in Model.Modules)
+                    {
+                         i++;
+                        <div class="card">
+                            <div class="card-header" id="headingOne">
+                                <h2 class="mb-0">
+                                    <span class="module-start-label">@module.StartDate.ToShortDateString() - @module.EndDate.ToShortDateString() </span>
+                                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#@module.ModuleName" aria-expanded="true" aria-controls="@module.ModuleName">
+                                        @module.ModuleName
+                                    </button>
 
-                            </h2>
-                        </div>
+                                </h2>
+                            </div>
 
-                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                            <div class="card-body">
-                                <p>@module.Description</p>
-                                <a class="btn btn-success" asp-action="Create" asp-controller="Activity" asp-route-moduleId="@module.Id">Add activity</a>
-                                @if (module.Activities != null && module.Activities.Count() > 0)
-                                {
-                                    <partial name="~/Views/Activity/ActivityListPartial.cshtml" for="@module.Activities" />
-                                }
+                            <div id="@module.ModuleName" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <p>@module.Description</p>
+                                    <a class="btn btn-success" asp-action="Create" asp-controller="Activity" asp-route-moduleId="@module.Id">Add activity</a>
+                                    @if (module.Activities != null && module.Activities.Count() > 0)
+                                    {
+                                        <partial name="~/Views/Activity/ActivityListPartial.cshtml" for="@module.Activities" />
+                                    }
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
-            </div>
+                    }
+                </div>
         </div>
     </div>
     @if (SignInManager.IsSignedIn(User))
