@@ -38,7 +38,7 @@ namespace Lexicon_LMS.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Users()
         {
-            var users = await context.Users.ToListAsync();
+            var users = await context.Users.Include(u => u.Course).ToListAsync();
             var currentUserId = userManager.GetUserId(User);
 
             var models = mapper.Map<IEnumerable<UserViewModel>>(users.Where(q => q.Id != currentUserId));
@@ -74,7 +74,8 @@ namespace Lexicon_LMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new User
+              //  var user = mapper.Map<User>(userViewModel);         
+                var user =    new User
                 {
                     FirstName = userViewModel.FirstName,
                     LastName = userViewModel.LastName,
