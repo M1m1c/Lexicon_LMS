@@ -16,7 +16,7 @@ using Lexicon_LMS.Models.ViewModels;
 
 namespace Lexicon_LMS.Controllers
 {
-    [Authorize(Roles = "Teacher")]
+   
     public class CoursesController : Controller
     {
         private readonly ApplicationDbContext _context;
