@@ -26,7 +26,7 @@
                         <div class="card-header" id="headingOne">
                             <h2 class="mb-0">
                                 <span class="module-start-label bg-transparent">@module.StartDate.ToShortDateString() - @module.EndDate.ToShortDateString() </span>
-                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#module-@module.Id" aria-expanded="true" aria-controls="module-@module.Id">
                                     @module.ModuleName
                                 </button>
                                 @if (User.IsInRole("Teacher"))
@@ -36,7 +36,7 @@
                             </h2>
                         </div>
 
-                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div id="module-@module.Id" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                             <div class="card-body">
                                 <p>@module.Description</p>
                                 @if (User.IsInRole("Teacher"))
