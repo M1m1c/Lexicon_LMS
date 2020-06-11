@@ -29,9 +29,22 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Activity/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> Details(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var activity = await context.Activities.FindAsync(id);
+
+           
+            if (activity == null)
+            {
+                return NotFound();
+            }
+            var model = mapper.Map<CourseActivityViewModel>(activity);
+
+            return View(model);
         }
 
         private List<SelectListItem> GetActivityTypesForDropDown()
