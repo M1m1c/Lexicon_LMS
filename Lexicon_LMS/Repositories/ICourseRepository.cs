@@ -12,5 +12,6 @@ namespace Lexicon_LMS.Repositories
     {
         void Add(Course course);
         Task<CourseDetailsViewModel> GetDetailsViewModelAsync(int? id);
+        Course GetCourseById(int courseId);
     }
 }

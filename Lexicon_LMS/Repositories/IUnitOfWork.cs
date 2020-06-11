@@ -8,7 +8,7 @@ namespace Lexicon_LMS.Repositories
     public interface IUnitOfWork
     {
         ICourseRepository CourseRepository { get; }
-
+        IUserRepository UserRepository { get; set; }
         Task CompleateAsync(); 
     }
 }

@@ -4,19 +4,17 @@
     ViewData["Title"] = "CreateUser";
 }
 
-<h1>CreateUser</h1>
+<h1>Create User</h1>
+@if (Model.CourseName != null)
+{
+    <div>You are creating a student for the course <span class="font-weight-bold">@Model.CourseName</span></div>
+}
 
-<h4>UserViewModel</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="CreateUser">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Age" class="control-label"></label>
-                <input asp-for="Age" class="form-control" />
-                <span asp-validation-for="Age" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
                 <input asp-for="FirstName" class="form-control" />
@@ -28,27 +26,35 @@
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Age" class="control-label"></label>
+                <input asp-for="Age" class="form-control" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ConfirmPassword" class="control-label"></label>
-                <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Role" class="control-label"></label>
                 <div class="col-md-5">
-                    @Html.DropDownListFor(m => m.Role, Model.Roles)
+
+                    @if (Model.Role != "Student")
+                    {
+                        @Html.DropDownListFor(m => m.Role, Model.Roles)
+                    }
+                    else
+                    {
+                        <input type="hidden" asp-for="Role" value="Student" />
+                        <select disabled>
+                            <option value="Student">Student</option>
+                        </select>
+                    }
+
                 </div>
                 <span asp-validation-for="Role" class="text-danger"></span>
             </div>
+            <input type="hidden" asp-for="CourseId" value="@Model.CourseId" />
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
