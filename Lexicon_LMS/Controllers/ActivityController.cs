@@ -42,7 +42,9 @@ namespace Lexicon_LMS.Controllers
             {
                 return NotFound();
             }
-            var model = mapper.Map<CourseActivityViewModel>(activity);
+            
+            var model = mapper.Map<CourseActivityViewModel>(activity);         
+            model.ActivityTypeName = context.ActivityTypes.Find(int.Parse(model.ActivityTypeId)).Name;
 
             return View(model);
         }
