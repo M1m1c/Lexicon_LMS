@@ -1,17 +1,14 @@
 ﻿@model IEnumerable<Lexicon_LMS.Models.ViewModels.CourseActivityViewModel>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.ActivityName)
             </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.ActivityTypeId)
-            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.ActivityTypeName)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -22,9 +19,9 @@
                 <a asp-action="Details" asp-controller="Activity" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.ActivityName)</a>
                 
             </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.ActivityTypeId)
-            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.ActivityTypeName)
+            </td>
         </tr>
 }
     </tbody>

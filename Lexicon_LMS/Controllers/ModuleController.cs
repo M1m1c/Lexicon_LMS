@@ -6,6 +6,7 @@ using AutoMapper;
 using Lexicon_LMS.Data;
 using Lexicon_LMS.Models;
 using Lexicon_LMS.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -95,27 +96,40 @@ namespace Lexicon_LMS.Controllers
             }
         }
 
-        // GET: Module/Delete/5
-        public ActionResult Delete(int id)
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+            
+            var module = await context.Modules.FindAsync(id);
+            if (module == null)
+            {
+                return NotFound();
+            }
+
+            return View(module);
         }
 
-        // POST: Module/Delete/5
-        [HttpPost]
+        // POST: Courses/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            try
-            {
-                // TODO: Add delete logic here
+            
+            var module = await context.Modules.FindAsync(id);
+            var courseId = module.CourseId;
+            context.Modules.Remove(module);
+            await context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details),"Courses", new { Id = courseId });
+        }
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+        public IActionResult AddParticipant(int courseId)
+        {
+            return RedirectToAction("CreateUser", "Teacher", new { courseId = courseId });
         }
     }
 }

@@ -16,7 +16,18 @@ namespace Lexicon_LMS
         {
             CreateMap<CourseCreateViewModel, Course>();
             CreateMap<Course, CourseDetailsViewModel>();
-            CreateMap<User, UserViewModel>();
+            CreateMap<User, UserViewModel>().ForMember(
+                    dest => dest.CourseName,
+                    from => from.MapFrom(u => u.Course.CourseName)
+                    );
+             
+          //  CreateMap<UserViewModel, User>().ForMember(
+            //        dest => dest.Course.CourseName,
+           ////         from => from.MapFrom(u => u.CourseName)
+              //  ).ForMember(
+              //      dest => dest.UserName,
+             //       from => from.MapFrom(u => u.Email)
+             //   );
             CreateMap<User, EditUserViewModel>();
             CreateMap<ModuleViewModel, Module>();
             CreateMap<Module, ModuleViewModel>();
