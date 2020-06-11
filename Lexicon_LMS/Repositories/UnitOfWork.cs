@@ -12,11 +12,13 @@ namespace Lexicon_LMS.Repositories
     {
         private ApplicationDbContext _db;
         public ICourseRepository CourseRepository { get; private set; }
+        public IUserRepository UserRepository { get; set; }
 
         public UnitOfWork(ApplicationDbContext db, IMapper mapper)
         {
             _db = db;
             CourseRepository = new CourseRepository(db, mapper);
+            UserRepository = new UserRepository(db, mapper);
         }
 
         public async Task CompleateAsync()

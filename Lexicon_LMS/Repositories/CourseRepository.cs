@@ -26,6 +26,13 @@ namespace Lexicon_LMS.Repositories
             _db.Add(course);
         }
 
+     
+
+        public Course GetCourseById(int courseId)
+        {
+            return _db.Courses.Where(c => c.Id == courseId).FirstOrDefault();
+        }
+
         public async Task<CourseDetailsViewModel> GetDetailsViewModelAsync(int? id)
         {
             return await _mapper.ProjectTo<CourseDetailsViewModel>(_db.Courses).FirstOrDefaultAsync(model => model.Id == id);

@@ -184,6 +184,12 @@ namespace Lexicon_LMS.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public IActionResult AddParticipant(int courseId)
+        {
+            return RedirectToAction("CreateUser", "Teacher", new { courseId = courseId });
+        }
+
+
         private bool CourseExists(int id)
         {
             return _context.Courses.Any(e => e.Id == id);

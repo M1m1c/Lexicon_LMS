@@ -6,11 +6,13 @@ using AutoMapper;
 using Lexicon_LMS.Data;
 using Lexicon_LMS.Models;
 using Lexicon_LMS.Models.ViewModels;
+using Lexicon_LMS.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -20,13 +22,17 @@ namespace Lexicon_LMS.Controllers
         private readonly UserManager<User> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IMapper mapper;
+        private readonly IUnitOfWork unitOfWork;
+        private readonly IConfiguration _configuration;
 
-        public TeacherController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper)
+        public TeacherController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper, IUnitOfWork unitOfWork, IConfiguration configuration)
         {
             this.context = context;
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.mapper = mapper;
+            this.unitOfWork = unitOfWork;
+            _configuration = configuration;
         }
 
         [Authorize(Roles = "Teacher")]
@@ -51,8 +57,14 @@ namespace Lexicon_LMS.Controllers
         }
 
         [Authorize(Roles = "Teacher")]
-        public IActionResult CreateUser()
+        public IActionResult CreateUser(int? courseId)
         {
+            if (courseId != null)
+            {
+                var course = unitOfWork.CourseRepository.GetCourseById((int)courseId);
+                var model = new UserViewModel { Role = "Student", CourseName = course.CourseName, CourseId = course.Id, Roles = GetRolesForDropDown() };
+                return View(model);
+            }
             return View(new UserViewModel { Roles = GetRolesForDropDown() });
         }
 
@@ -76,7 +88,12 @@ namespace Lexicon_LMS.Controllers
 
                 if (role != null)
                 {
-                    var result = await userManager.CreateAsync(user, userViewModel.Password);
+                    if (userViewModel.CourseId != 0 && role.Name == "Student")
+                    {
+                        user.CourseId = userViewModel.CourseId;
+                    }
+
+                    var result = await userManager.CreateAsync(user, _configuration["DefaultPassword"]);
 
                     if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
 
@@ -86,17 +103,12 @@ namespace Lexicon_LMS.Controllers
 
                     if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
 
-                    if (role.Name == "Student")
-                    {
-                        //TODO make sure that this redirects to an existing action and controller
-                        return RedirectToAction("AssignToCourse", addedUser.Id);
-                    }
-
+                  
                     return RedirectToAction(nameof(Users));
                 }
 
             }
-            return View();
+            return View(userViewModel);
         }
 
         [Authorize(Roles = "Teacher")]
