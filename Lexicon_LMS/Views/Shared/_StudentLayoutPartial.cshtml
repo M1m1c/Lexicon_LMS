@@ -9,7 +9,7 @@
         <a class="nav-link text-light" asp-area="" asp-controller="Courses" asp-action="Details" asp-route-Id="@UserManager.GetUserAsync(User).Result.CourseId">Course</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-light" asp-area="" asp-controller="" asp-action="">Participents</a>
+        <a class="nav-link text-light" asp-area="" asp-controller="Courses" asp-action="ShowPaticipants" asp-route-courseId="@UserManager.GetUserAsync(User).Result.CourseId" >Participents</a>
     </li>
     <li class="nav-item">
         <a class="nav-link text-light" asp-area="" asp-controller="" asp-action="">Documents</a>
