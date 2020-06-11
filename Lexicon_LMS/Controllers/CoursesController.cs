@@ -60,6 +60,12 @@ namespace Lexicon_LMS.Controllers
             {
                 var activeties= await _context.Activities.Where(a => a.ModuleId == mod.Id).ToListAsync();
                 mod.Activities = _mapper.Map<IEnumerable<CourseActivityViewModel>>(activeties);
+
+                foreach (var act in mod.Activities)
+                {
+                    var result = await _context.ActivityTypes.FindAsync(int.Parse(act.ActivityTypeId));
+                    act.ActivityTypeName = result.Name;
+                }
             }
 
            if (model == null)
