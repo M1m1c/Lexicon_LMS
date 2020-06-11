@@ -41,7 +41,11 @@
 
                     @if (Model.Role != "Student")
                     {
-                        @Html.DropDownListFor(m => m.Role, Model.Roles)
+                       
+                        <input type="hidden" asp-for="Role" value="Teacher" />
+                        <select disabled>
+                            <option value="Teacher">Teacher</option>
+                        </select>
                     }
                     else
                     {
