@@ -25,6 +25,13 @@
                             <li>
                                 <h5> <a asp-controller="Courses" asp-action="Details" asp-route-id="@item.Id">@item.CourseName</a></h5>
                             </li>
+                            //TODO fix modeule for each course
+                            @foreach (var item1 in Model.onGoingModule)
+                            {
+                                <li>
+                                    <h5> <a asp-controller="Module" asp-action="Details" asp-route-id="@item1.Id">@item1.CourseId</a></h5>
+                                </li>
+                            }
                         }
                     }
                 }
