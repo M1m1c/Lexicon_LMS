@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Lexicon_LMS.Models;
+using Lexicon_LMS.Models.ViewModels;
 
 namespace Lexicon_LMS.ViewModels.Courses
 {
@@ -17,7 +18,7 @@ namespace Lexicon_LMS.ViewModels.Courses
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
-        public ICollection<Module> Modules { get; set; }
+        public ICollection<ModuleViewModel> Modules { get; set; }
 
     }
 }

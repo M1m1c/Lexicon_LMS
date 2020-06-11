@@ -19,6 +19,9 @@ namespace Lexicon_LMS
             CreateMap<User, UserViewModel>();
             CreateMap<User, EditUserViewModel>();
             CreateMap<ModuleViewModel, Module>();
+            CreateMap<Module, ModuleViewModel>();
+            CreateMap<CourseActivityViewModel, CourseActivity>();
+            CreateMap<CourseActivity, CourseActivityViewModel>();
         }
 
 

@@ -12,6 +12,7 @@ using AutoMapper;
 using Lexicon_LMS.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Lexicon_LMS.ViewModels.Courses;
+using Lexicon_LMS.Models.ViewModels;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -54,8 +55,13 @@ namespace Lexicon_LMS.Controllers
                 return NotFound();
             }
             var model = await _unitOfWork.CourseRepository.GetDetailsViewModelAsync(id);
-        //    var course = await _context.Courses
-        //        .FirstOrDefaultAsync(m => m.Id == id);
+
+            foreach (var mod in model.Modules)
+            {
+                var activeties= await _context.Activities.Where(a => a.ModuleId == mod.Id).ToListAsync();
+                mod.Activities = _mapper.Map<IEnumerable<CourseActivityViewModel>>(activeties);
+            }
+
            if (model == null)
             {
                 return NotFound();

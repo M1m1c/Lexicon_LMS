@@ -23,6 +23,6 @@ namespace Lexicon_LMS.Models.ViewModels
 
         public Course Course { get; set; }
         public ICollection<Document> Documents { get; set; }
-        public ICollection<CourseActivity> Activities { get; set; }
+        public IEnumerable<CourseActivityViewModel> Activities { get; set; }
     }
 }
