@@ -25,17 +25,17 @@
                     {
                          i++;
                         <div class="card">
-                            <div class="card-header" id="headingOne">
+                            <div class="card-header" id="heading-@module.Id">
                                 <h2 class="mb-0">
                                     <span class="module-start-label">@module.StartDate.ToShortDateString() - @module.EndDate.ToShortDateString() </span>
-                                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#@module.ModuleName" aria-expanded="true" aria-controls="@module.ModuleName">
+                                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#module-@module.Id" aria-expanded="true" aria-controls="module-@module.Id">
                                         @module.ModuleName
                                     </button>
 
                                 </h2>
                             </div>
 
-                            <div id="@module.ModuleName" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div id="module-@module.Id" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                                 <div class="card-body">
                                     <p>@module.Description</p>
                                     <a class="btn btn-success" asp-action="Create" asp-controller="Activity" asp-route-moduleId="@module.Id">Add activity</a>
