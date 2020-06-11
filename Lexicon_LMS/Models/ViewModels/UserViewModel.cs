@@ -15,10 +15,12 @@ namespace Lexicon_LMS.Models.ViewModels
         [Required]
         public int Age { get; set; }
 
+        [Display(Name = "First name")]
         [Required]
         public String FirstName { get; set; }
 
         [Required]
+        [Display(Name = "Last name")]
         public String LastName { get; set; }
 
         [Required]
@@ -29,6 +31,7 @@ namespace Lexicon_LMS.Models.ViewModels
         public string Role { get; set; }
         public IEnumerable<SelectListItem> Roles { get; set; }
 
+        [Display(Name = "Course name")]
         public string CourseName { get; set; }
 
         public int CourseId { get; set; }
