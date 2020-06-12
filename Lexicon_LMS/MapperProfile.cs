@@ -33,6 +33,7 @@ namespace Lexicon_LMS
             CreateMap<Module, ModuleViewModel>();
             CreateMap<CourseActivityViewModel, CourseActivity>();
             CreateMap<CourseActivity, CourseActivityViewModel>();
+            CreateMap<DocumentViewModel, Document>();
         }
 
 
