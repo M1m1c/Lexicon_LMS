@@ -14,6 +14,7 @@ namespace Lexicon_LMS.Models.ViewModels
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
+        public int CourseId { get; set; }
         public int ModuleId { get; set; }
         public string ActivityTypeName { get; set; }
         public string ActivityTypeId { get; set; }

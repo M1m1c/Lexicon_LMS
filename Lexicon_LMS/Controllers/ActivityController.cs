@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -29,7 +30,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Activity/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id,int? courseId)
         {
             if (id == null)
             {
@@ -42,11 +43,8 @@ namespace Lexicon_LMS.Controllers
             {
                 return NotFound();
             }
-            
-            var model = mapper.Map<CourseActivityViewModel>(activity);         
-            model.ActivityTypeName = context.ActivityTypes.Find(int.Parse(model.ActivityTypeId)).Name;
-
-            return View(model);
+           
+            return View(ToCourseActivityViewModel(activity, courseId));
         }
 
         private List<SelectListItem> GetActivityTypesForDropDown()
@@ -56,17 +54,19 @@ namespace Lexicon_LMS.Controllers
 
         // GET: Activity/Create
         [Authorize(Roles = "Teacher")]
-        public ActionResult Create(int? moduleId)
+        public async Task<IActionResult> Create(int? moduleId)
         {
-            if (context.Modules.Find(moduleId) == null) 
+            var module = await context.Modules.FindAsync(moduleId);
+            if (module == null) 
             {
                 return NotFound();
             }
+
             var courseActivity = new CourseActivityViewModel
             {
                 ModuleId = (int)moduleId,
-                ActivityTypes = GetActivityTypesForDropDown()
-                
+                ActivityTypes = GetActivityTypesForDropDown(),
+                CourseId=module.CourseId
             };
             return View(courseActivity);
         }
@@ -104,49 +104,97 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Activity/Edit/5
-        public ActionResult Edit(int id)
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Edit(int? id, int? courseId)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var activity = await context.Activities.FindAsync(id);
+            if (activity == null)
+            {
+                return NotFound();
+            }
+            return View(ToCourseActivityViewModel(activity, courseId));
         }
 
         // POST: Activity/Edit/5
         [HttpPost]
+        [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(int id, CourseActivityViewModel model)
         {
-            try
+            if (id != model.Id)
             {
-                // TODO: Add update logic here
+                return NotFound();
+            }
+           
+            if (ModelState.IsValid)
+            {
+                var activity = mapper.Map<CourseActivity>(model);
+                try
+                {
+                    context.Update(activity);
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
 
-                return RedirectToAction(nameof(Index));
+                    if (!context.Activities.Any(a=>a.Id ==id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Details), new { id, model.CourseId });
             }
-            catch
-            {
-                return View();
-            }
+            return View(model);
         }
 
         // GET: Activity/Delete/5
-        public ActionResult Delete(int id)
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Delete(int? id, int? courseId)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var activity = await context.Activities
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (activity == null)
+            {
+                return NotFound();
+            }
+            
+            return View(ToCourseActivityViewModel(activity, courseId));
         }
 
         // POST: Activity/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(int id, int? courseId)
         {
-            try
-            {
-                // TODO: Add delete logic here
+            var activity = await context.Activities.FindAsync(id);
+            context.Activities.Remove(activity);
+            await context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details),"Courses",new { id=(int)courseId });
+        }
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+        private CourseActivityViewModel ToCourseActivityViewModel(CourseActivity act,int? courseId)
+        {
+            CourseActivityViewModel ret = mapper.Map<CourseActivityViewModel>(act);
+            ret.ActivityTypeName = context.ActivityTypes.Find(act.ActivityTypeId).Name;
+            ret.ActivityTypes = GetActivityTypesForDropDown();
+            ret.CourseId = (int)courseId;
+            ret.ModuleId = (int)act.ModuleId;
+            return ret;
         }
     }
 }

@@ -65,6 +65,7 @@ namespace Lexicon_LMS.Controllers
                 {
                     var result = await _context.ActivityTypes.FindAsync(int.Parse(act.ActivityTypeId));
                     act.ActivityTypeName = result.Name;
+                    act.CourseId = (int)id;
                 }
             }
 
@@ -190,7 +191,6 @@ namespace Lexicon_LMS.Controllers
         }
 
 
-        [Authorize(Roles = "Student")]
         public async Task<IActionResult> ShowPaticipants(int? courseId)
         {
             var course = await _context.Courses.FindAsync(courseId);

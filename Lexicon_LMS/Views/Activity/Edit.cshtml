@@ -1,17 +1,20 @@
 ﻿@model Lexicon_LMS.Models.ViewModels.CourseActivityViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
 }
 
-<h1>Create</h1>
+<h1>Edit</h1>
 
-<h4>CourseActivity</h4>
+<h4>CourseActivityViewModel</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" class="form-control" />
+            <input type="hidden" asp-for="CourseId" class="form-control" />
+            <input type="hidden" asp-for="ModuleId" class="form-control" />
             <div class="form-group">
                 <label asp-for="ActivityName" class="control-label"></label>
                 <input asp-for="ActivityName" class="form-control" />
@@ -39,17 +42,14 @@
                 </div>
                 <span asp-validation-for="ActivityTypeId" class="text-danger"></span>
             </div>
-            <input type="hidden" asp-for="ModuleId" />
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a class="btn btn-warning" asp-action="Details" asp-route-id="@Model.Id" asp-route-courseId="@Model.CourseId">Back to details</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a class="btn btn-warning" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId">Back to course</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

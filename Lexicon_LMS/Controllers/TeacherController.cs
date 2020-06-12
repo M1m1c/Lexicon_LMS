@@ -252,11 +252,13 @@ namespace Lexicon_LMS.Controllers
         {
              var today = DateTime.Now;
             IQueryable<Course> onGoing = context.Courses.Where(c => c.StartDate <= today && c.EndDate > today);
+            IQueryable<Module> module = context.Modules.Where(m => m.StartDate <= today && m.EndDate > today);
             IQueryable<Course> past = context.Courses.Where(c => c.EndDate < today);
             IQueryable<Course> future = context.Courses.Where(c => c.StartDate >= today);
             var viewModel = new TeacherPageViewModel
             {
                 OnGoingCourses = onGoing?.ToList(),
+                onGoingModules = module?.ToList(),
                 pastCourses = past?.ToList(),
                 futureCourses = future?.ToList()
             };
