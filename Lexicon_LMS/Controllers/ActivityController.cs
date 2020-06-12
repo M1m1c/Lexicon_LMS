@@ -29,7 +29,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Activity/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id,int? courseId)
         {
             if (id == null)
             {
@@ -45,6 +45,7 @@ namespace Lexicon_LMS.Controllers
             
             var model = mapper.Map<CourseActivityViewModel>(activity);         
             model.ActivityTypeName = context.ActivityTypes.Find(int.Parse(model.ActivityTypeId)).Name;
+            model.CourseId = (int)courseId;
 
             return View(model);
         }
