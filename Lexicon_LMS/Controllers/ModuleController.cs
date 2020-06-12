@@ -9,6 +9,7 @@ using Lexicon_LMS.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -31,9 +32,38 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Module/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> ModuleDetails(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var module = await context.Modules.FirstOrDefaultAsync(a => a.Id == id);
+            if (module is null)
+            {
+                return NotFound();
+            }
+            var course = await context.Courses.FirstOrDefaultAsync(a => a.Id == module.CourseId);
+            if (course is null)
+            {
+                return NotFound();
+            }
+            var model = new ModuleDetailsViewModel()
+            {
+                CourseId = course.Id,
+                CourseName = course.CourseName,
+                Id = module.Id,
+                ModuleName = module.ModuleName,
+                Description = module.Description,
+                StartDate = module.StartDate,
+                EndDate = module.EndDate,
+                ParentStartDate = course.EndDate,
+                ParentEndDate = course.EndDate
+            };
+            model.CourseId = course.Id;
+            model.CourseName = course.CourseName;
+            return View(model);
         }
 
         // GET: Module/Create
@@ -96,6 +126,7 @@ namespace Lexicon_LMS.Controllers
             }
         }
 
+     
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Delete(int? id)
         {
