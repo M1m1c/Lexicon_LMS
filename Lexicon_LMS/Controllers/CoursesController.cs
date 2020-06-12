@@ -16,7 +16,7 @@ using Lexicon_LMS.Models.ViewModels;
 
 namespace Lexicon_LMS.Controllers
 {
-   
+
     public class CoursesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -58,17 +58,18 @@ namespace Lexicon_LMS.Controllers
 
             foreach (var mod in model.Modules)
             {
-                var activeties= await _context.Activities.Where(a => a.ModuleId == mod.Id).ToListAsync();
+                var activeties = await _context.Activities.Where(a => a.ModuleId == mod.Id).ToListAsync();
                 mod.Activities = _mapper.Map<IEnumerable<CourseActivityViewModel>>(activeties);
 
                 foreach (var act in mod.Activities)
                 {
                     var result = await _context.ActivityTypes.FindAsync(int.Parse(act.ActivityTypeId));
                     act.ActivityTypeName = result.Name;
+                    act.CourseId = (int)id;
                 }
             }
 
-           if (model == null)
+            if (model == null)
             {
                 return NotFound();
             }
@@ -148,7 +149,7 @@ namespace Lexicon_LMS.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Details),new { id });
+                return RedirectToAction(nameof(Details), new { id });
             }
             return View(course);
         }
@@ -187,6 +188,24 @@ namespace Lexicon_LMS.Controllers
         public IActionResult AddParticipant(int courseId)
         {
             return RedirectToAction("CreateUser", "Teacher", new { courseId = courseId });
+        }
+
+
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> ShowPaticipants(int? courseId)
+        {
+            var course = await _context.Courses.FindAsync(courseId);
+            if ( course == null)
+            {
+                return NotFound();
+            }
+            var users = await _context.Users.Where(u => u.CourseId == courseId).ToListAsync();
+
+            var model = _mapper.Map<IEnumerable<UserViewModel>>(users);
+            model.Select(m => m.CourseName = course.CourseName);
+
+            return View(model);
+
         }
 
 
