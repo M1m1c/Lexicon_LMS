@@ -4,45 +4,38 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+    <h1> @Html.DisplayFor(model => model.ActivityName)</h1>
 
-<div>
-    <h4>CourseActivityViewModel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ActivityName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ActivityName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ActivityDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ActivityDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ActivityTypeName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ActivityTypeName)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div>
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ActivityTypeName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.ActivityTypeName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.StartDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.StartDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.EndDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.EndDate)
+            </dd>
+
+        </dl>
+        <h4>Description</h4>
+        <p>@Html.DisplayFor(model => model.ActivityDescription)</p>
+        <hr />
+    </div>
+    <div>
+        @if (User.IsInRole("Teacher"))
+        {
+            <a class="btn btn-warning" asp-controller="Activity" asp-action="Edit" asp-route-Id="@Model.Id" asp-route-courseId="@Model.CourseId">Edit Activity</a>
+        }
+        <a class="btn btn-primary" asp-controller="Courses" asp-action="Details" asp-route-Id="@Model.CourseId">Back to course</a>
+    </div>

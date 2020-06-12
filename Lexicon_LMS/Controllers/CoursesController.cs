@@ -65,6 +65,7 @@ namespace Lexicon_LMS.Controllers
                 {
                     var result = await _context.ActivityTypes.FindAsync(int.Parse(act.ActivityTypeId));
                     act.ActivityTypeName = result.Name;
+                    act.CourseId = (int)id;
                 }
             }
 
