@@ -16,15 +16,36 @@
         <hr />
         <div class="backcard border-success">
             <ul>
+                @*//@{int i = 0; }*@
                 @if (Model != null)
                 {
                     @if (Model.OnGoingCourses.Count > 0)
                     {
+
                         @foreach (var item in Model.OnGoingCourses)
                         {
+                            //i++;
                             <li>
                                 <h5> <a asp-controller="Courses" asp-action="Details" asp-route-id="@item.Id">@item.CourseName</a></h5>
+
                             </li>
+                            //TODO fix modeule for each course
+
+                            @foreach (var item1 in Model.onGoingModules)
+                            {
+                                @if (item1.CourseId == item.Id)
+                                {
+                                   
+            <ol>
+                
+                    <h8> <a asp-controller="Module" asp-action="Details" asp-route-id="@item1.Id">@item1.ModuleName</a></h8>
+               
+            </ol>
+                                        
+                                   
+                                }
+
+                            }
                         }
                     }
                 }
