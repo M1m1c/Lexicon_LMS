@@ -14,6 +14,9 @@ table {
     background-color: rgba(212, 212, 212, 0.61);
 }
 
+.display {
+    padding: 1%;
+}
 .section .row .col-md-8 {
     margin-right: -20%;
     padding: 1%;
