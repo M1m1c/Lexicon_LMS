@@ -31,7 +31,7 @@ namespace Lexicon_LMS.Controllers
             return View();
         }
 
-        // GET: Module/Details/5
+        // GET: Module/ModuleDetails/5
         public async Task<ActionResult> ModuleDetails(int? id)
         {
             if (id == null)
@@ -92,7 +92,7 @@ namespace Lexicon_LMS.Controllers
                     context.Add(module);
                     await context.SaveChangesAsync();
 
-                    return RedirectToAction(nameof(Details), "Courses", new { Id = moduleViewModel.CourseId });
+                    return RedirectToAction(nameof(ModuleDetails), "Courses", new { Id = moduleViewModel.CourseId });
                 }
                 catch
                 {
@@ -155,7 +155,7 @@ namespace Lexicon_LMS.Controllers
             var courseId = module.CourseId;
             context.Modules.Remove(module);
             await context.SaveChangesAsync();
-            return RedirectToAction(nameof(Details),"Courses", new { Id = courseId });
+            return RedirectToAction(nameof(ModuleDetails),"Courses", new { Id = courseId });
         }
 
         public IActionResult AddParticipant(int courseId)
