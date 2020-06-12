@@ -189,6 +189,8 @@ namespace Lexicon_LMS.Controllers
             return RedirectToAction("CreateUser", "Teacher", new { courseId = courseId });
         }
 
+
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> ShowPaticipants(int? courseId)
         {
             var course = await _context.Courses.FindAsync(courseId);
