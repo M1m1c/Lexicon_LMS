@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -105,26 +106,59 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Activity/Edit/5
-        public ActionResult Edit(int id)
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Edit(int? id, int? courseId)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var activity = await context.Activities.FindAsync(id);
+            if (activity == null)
+            {
+                return NotFound();
+            }
+            var model = mapper.Map<CourseActivityViewModel>(activity);
+            model.ActivityTypes = GetActivityTypesForDropDown();
+            model.CourseId = (int)courseId;
+            return View(model);
         }
 
         // POST: Activity/Edit/5
         [HttpPost]
+        [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(int id, CourseActivityViewModel model)
         {
-            try
+            if (id != model.Id)
             {
-                // TODO: Add update logic here
+                return NotFound();
+            }
+           
+            if (ModelState.IsValid)
+            {
+                var activity = mapper.Map<CourseActivity>(model);
+                try
+                {
+                    context.Update(activity);
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
 
-                return RedirectToAction(nameof(Index));
+                    if (!context.Activities.Any(a=>a.Id ==id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Details), new { id, model.CourseId });
             }
-            catch
-            {
-                return View();
-            }
+            return View(model);
         }
 
         // GET: Activity/Delete/5
