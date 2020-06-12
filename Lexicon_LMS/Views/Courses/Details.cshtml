@@ -22,7 +22,7 @@
             <div class="accordion" id="accordionExample">
                 @foreach (var module in Model.Modules)
                 {
-                    <div class="card">
+                    <div class="card bg-transparent">
                         <div class="card-header" id="headingOne">
                             <h2 class="mb-0">
                                 <span class="module-start-label bg-transparent">@module.StartDate.ToShortDateString() - @module.EndDate.ToShortDateString() </span>
@@ -36,12 +36,12 @@
                             </h2>
                         </div>
 
-                        <div id="module-@module.Id" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div id="module-@module.Id" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                             <div class="card-body">
                                 <p>@module.Description</p>
                                 @if (User.IsInRole("Teacher"))
                                 {
-                                    <a class="btn btn-success" asp-action="Create" asp-controller="Activity" asp-route-moduleId="@module.Id">Add activity</a>
+                                    <a class="btn btn-primary mb-4" asp-action="Create" asp-controller="Activity" asp-route-moduleId="@module.Id">Add activity</a>
                                 }
                                 @if (module.Activities != null && module.Activities.Count() > 0)
                                 {
