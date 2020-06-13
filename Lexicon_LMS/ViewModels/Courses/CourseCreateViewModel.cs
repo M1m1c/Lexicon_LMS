@@ -21,15 +21,17 @@ namespace Lexicon_LMS.ViewModels.Courses
         [Required]
         [Display(Name = "Start date")]
         [DataType(DataType.Date)]
+
         [CurrentDate(ErrorMessage = "Date can't be before the current date")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+        [DisplayFormat(DataFormatString = "{0:D}")]
+
         public DateTime StartDate { get; set; }
 
         [Required]
         [Display(Name = "End date")]
         [DataType(DataType.Date)]
         [AfterStartDate]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+        [DisplayFormat(DataFormatString = "{0:D}")]
         public DateTime EndDate { get; set; }
 
     }
