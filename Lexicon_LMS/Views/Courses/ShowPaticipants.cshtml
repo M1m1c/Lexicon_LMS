@@ -9,7 +9,7 @@
 
 <table class="table">
     <thead>
-        <tr>          
+        <tr>
             <th>
                 @Html.DisplayNameFor(model => model.FirstName)
             </th>
@@ -23,18 +23,28 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                @if (User.IsInRole("Teacher"))
+                {
+                    <td>
+                        <a asp-controller="Teacher" asp-action="EditUser" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-controller="Teacher" asp-action="UserDetails" asp-route-id="@item.Id">Details</a> |
+                        <a asp-controller="Teacher" asp-action="DeleteUser" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }
+
+            </tr>
+        }
     </tbody>
 </table>

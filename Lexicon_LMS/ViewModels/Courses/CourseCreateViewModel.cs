@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lexicon_LMS.Attributes;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -19,12 +21,16 @@ namespace Lexicon_LMS.ViewModels.Courses
         [Required]
         [Display(Name = "Start date")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:D}")]
+        [CurrentDate(ErrorMessage = "Date can't be before the current date")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime StartDate { get; set; }
+
         [Required]
         [Display(Name = "End date")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:D}")]
+        [AfterStartDate]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime EndDate { get; set; }
+
     }
 }
