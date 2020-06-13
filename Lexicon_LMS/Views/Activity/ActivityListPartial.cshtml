@@ -13,16 +13,24 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                <a asp-action="Details" asp-controller="Activity" asp-route-id="@item.Id" asp-route-courseId="@item.CourseId">@Html.DisplayFor(modelItem => item.ActivityName)</a>
-                
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ActivityTypeName)
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-controller="Activity" asp-route-id="@item.Id" asp-route-courseId="@item.CourseId">@Html.DisplayFor(modelItem => item.ActivityName)</a>
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ActivityTypeName)
+                </td>
+
+                @if (User.IsInRole("Teacher"))
+                {
+                    <td>
+                        <a class="btn btn-danger mb-4" asp-action="Delete" asp-controller="Activity" asp-route-id="@item.Id" asp-route-courseId="@item.CourseId">Delete</a>
+                    </td>
+                }
+            </tr>
+        }
     </tbody>
 </table>
