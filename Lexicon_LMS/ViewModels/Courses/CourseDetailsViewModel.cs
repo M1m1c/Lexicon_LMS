@@ -14,7 +14,7 @@ namespace Lexicon_LMS.ViewModels.Courses
         public string CourseName { get; set; }
         public string Description { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+        [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
