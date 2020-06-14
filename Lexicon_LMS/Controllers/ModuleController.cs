@@ -6,6 +6,7 @@ using AutoMapper;
 using Lexicon_LMS.Data;
 using Lexicon_LMS.Models;
 using Lexicon_LMS.Models.ViewModels;
+using Lexicon_LMS.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +18,13 @@ namespace Lexicon_LMS.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
+        private readonly IUnitOfWork unitOfWork;
 
-
-        public ModuleController(ApplicationDbContext context, IMapper mapper)
+        public ModuleController(ApplicationDbContext context, IMapper mapper, IUnitOfWork unitOfWork)
         {
             this.context = context;
             this.mapper = mapper;
-            
+            this.unitOfWork = unitOfWork;
         }
         // GET: Module
         public ActionResult Index()
@@ -92,7 +93,7 @@ namespace Lexicon_LMS.Controllers
                     context.Add(module);
                     await context.SaveChangesAsync();
 
-                    return RedirectToAction(nameof(Details), "Courses", new { Id = moduleViewModel.CourseId });
+                    return RedirectToAction("Details", "Courses", new { Id = moduleViewModel.CourseId });
                 }
                 catch
                 {
@@ -155,12 +156,27 @@ namespace Lexicon_LMS.Controllers
             var courseId = module.CourseId;
             context.Modules.Remove(module);
             await context.SaveChangesAsync();
-            return RedirectToAction(nameof(Details),"Courses", new { Id = courseId });
+            return RedirectToAction("Details","Courses", new { Id = courseId });
         }
 
         public IActionResult AddParticipant(int courseId)
         {
             return RedirectToAction("CreateUser", "Teacher", new { courseId = courseId });
         }
+
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyStartDate(DateTime startDate, int courseId)
+        {
+            var course = unitOfWork.CourseRepository.GetCourseById(courseId);
+       
+            if ((startDate - course.StartDate).TotalSeconds < 0)
+            {
+                return Json($"Module date can't be before course start date");
+            }         
+            return Json(true);
+        }
+
+
+
     }
 }
