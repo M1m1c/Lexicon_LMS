@@ -32,8 +32,8 @@ namespace Lexicon_LMS.Controllers
             return View();
         }
 
-        // GET: Module/Details/5
-        public async Task<ActionResult> ModuleDetails(int? id)
+        // GET: Module/ModuleDetails/5
+        public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {

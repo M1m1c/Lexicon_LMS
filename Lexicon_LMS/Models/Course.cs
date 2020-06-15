@@ -11,11 +11,12 @@ namespace Lexicon_LMS.Models
         public int Id { get; set; }
         public string CourseName { get; set; }
         public string Description { get; set; }
-        public int DifficultyId { get; set; }
-        public Difficulty Difficulties { get; set; }
-
-        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
+        [DisplayFormat(DataFormatString = "{0:D}")]
+        [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:D}")]
+        [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
         public ICollection<Module> Modules { get; set; }
         public ICollection<User> Users { get; set; }
