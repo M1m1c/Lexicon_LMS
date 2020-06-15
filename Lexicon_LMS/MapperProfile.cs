@@ -35,6 +35,7 @@ namespace Lexicon_LMS
             CreateMap<CourseActivity, CourseActivityViewModel>();
             CreateMap<DocumentViewModel, Document>();
             CreateMap<Document, DocumentViewModel>();
+
         }
 
 
