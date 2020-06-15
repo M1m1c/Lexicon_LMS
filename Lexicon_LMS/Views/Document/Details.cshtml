@@ -1,4 +1,6 @@
 ﻿@model Lexicon_LMS.Models.ViewModels.DocumentViewModel
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
 
 @{
     ViewData["Title"] = "Details";
@@ -37,5 +39,11 @@
     </dl>
 </div>
 <div>
-    <a href="##" onclick="history.go(-1); return false;">Back</a>
+    @if (UserManager.GetUserId(User) == Model.UserId)
+    {
+        <a asp-controller="Document" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Delete</a>
+        
+    }
+
+    <a class="btn btn-primary" href="##" onclick="history.go(-1); return false;">Back</a>
 </div>
