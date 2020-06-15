@@ -18,6 +18,10 @@ namespace Lexicon_LMS.ViewModels.Courses
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
+         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+        [DataType(DataType.Date)]
+        public DateTime EndDate { get; set; }
+
         public ICollection<ModuleViewModel> Modules { get; set; }
 
     }
