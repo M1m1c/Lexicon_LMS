@@ -35,7 +35,7 @@ namespace Lexicon_LMS.Models.ViewModels
         public int CourseId { get; set; }
 
         public Course Course { get; set; }
-        public ICollection<Document> Documents { get; set; }
+        public ICollection<DocumentViewModel> Documents { get; set; }
         public IEnumerable<CourseActivityViewModel> Activities { get; set; }
     }
 
