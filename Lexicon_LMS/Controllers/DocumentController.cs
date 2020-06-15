@@ -116,6 +116,7 @@ namespace Lexicon_LMS.Controllers
             return View(viewModel);
         }
 
+
         // GET: Activity/Details/5
         public async Task<IActionResult> Details(int? id)
         {
