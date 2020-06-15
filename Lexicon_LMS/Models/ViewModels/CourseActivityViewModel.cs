@@ -25,6 +25,6 @@ namespace Lexicon_LMS.Models.ViewModels
         public string ActivityTypeId { get; set; }
         public IEnumerable<SelectListItem> ActivityTypes { get; set; }
 
-        public ICollection<Document> Documents { get; set; }
+        public ICollection<DocumentViewModel> Documents { get; set; }
     }
 }

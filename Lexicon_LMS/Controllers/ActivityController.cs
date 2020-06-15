@@ -43,8 +43,10 @@ namespace Lexicon_LMS.Controllers
             {
                 return NotFound();
             }
-           
-            return View(ToCourseActivityViewModel(activity, courseId));
+            var model = ToCourseActivityViewModel(activity, courseId);
+            model.Documents = mapper.Map<ICollection<DocumentViewModel>>(context.Documents.Where(d => d.ActivityId == id));
+
+            return View(model);
         }
 
         private List<SelectListItem> GetActivityTypesForDropDown()

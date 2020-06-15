@@ -56,10 +56,13 @@ namespace Lexicon_LMS.Controllers
             }
             var model = await _unitOfWork.CourseRepository.GetDetailsViewModelAsync(id);
 
+            model.Documents =_mapper.Map<ICollection<DocumentViewModel>>(_context.Documents.Where(d => d.CourseId == model.Id));
+
             foreach (var mod in model.Modules)
             {
                 var activeties = await _context.Activities.Where(a => a.ModuleId == mod.Id).ToListAsync();
                 mod.Activities = _mapper.Map<IEnumerable<CourseActivityViewModel>>(activeties);
+                mod.Documents = _mapper.Map<ICollection<DocumentViewModel>>(_context.Documents.Where(d => d.ModuleId == mod.Id));
 
                 foreach (var act in mod.Activities)
                 {

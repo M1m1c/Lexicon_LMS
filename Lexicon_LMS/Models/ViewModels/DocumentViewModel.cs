@@ -19,6 +19,8 @@ namespace Lexicon_LMS.Models.ViewModels
         public HolderTypeEnum HolderType { get; set; }
 
         public User User { get; set; }
+        public string UpploaderName { get; set; }
+
     }
 
   

@@ -24,5 +24,7 @@ namespace Lexicon_LMS.ViewModels.Courses
 
         public ICollection<ModuleViewModel> Modules { get; set; }
 
+        public ICollection<DocumentViewModel> Documents { get; set; }
+
     }
 }
