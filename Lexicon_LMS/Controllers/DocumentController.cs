@@ -113,5 +113,25 @@ namespace Lexicon_LMS.Controllers
             }
             return View(viewModel);
         }
+
+        // GET: Activity/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var doc = await context.Documents.FindAsync(id);
+
+
+            if (doc == null)
+            {
+                return NotFound();
+            }
+            var model = mapper.Map<DocumentViewModel>(doc);
+            var user = await context.Users.FindAsync(doc.UserId);
+            model.UpploaderName = user.Email;
+            return View(model);
+        }
     }
 }
