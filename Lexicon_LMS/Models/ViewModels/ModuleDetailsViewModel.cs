@@ -25,11 +25,13 @@ namespace Lexicon_LMS.Models.ViewModels
 
         [Required]
         [Display(Name = "Module Starts")]
+        [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
         [Required]
         [Display(Name = "Module Ends")]
+        [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
@@ -38,11 +40,13 @@ namespace Lexicon_LMS.Models.ViewModels
 
 
         [Required]
+        [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
         [Display(Name = "Course Starts")]
         public DateTime ParentStartDate { get; set; }
 
         [Required]
+        [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
         [Display(Name = "Course Ends")]
         public DateTime ParentEndDate { get; set; }
