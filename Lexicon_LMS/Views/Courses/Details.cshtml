@@ -8,6 +8,7 @@
 
 <h1>@Model.CourseName <span class="course-start-label">@Model.StartDate.ToShortDateString() - @Model.EndDate.ToShortDateString()</span></h1>
 <a class="btn btn-primary float-right" asp-action="ShowPaticipants" asp-route-courseId="@Model.Id">View course Participants</a>
+
 <div>
     <div class="row">
         <div class="col-sm-12">
