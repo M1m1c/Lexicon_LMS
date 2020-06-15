@@ -43,16 +43,40 @@
 
                         <div id="module-@module.Id" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                             <div class="card-body">
-                                <p>@module.Description</p>
-                                @if (User.IsInRole("Teacher"))
-                                {
-                                    <a class="btn btn-primary mb-4" asp-action="Create" asp-controller="Activity" asp-route-moduleId="@module.Id">Add activity</a>
-                                    <a class="btn btn-primary mb-4" asp-controller="Document" asp-action="Create" asp-route-holderId="@module.Id" asp-route-userId="@UserManager.GetUserId(User)" asp-route-holderType="@moduletype">Add module File</a>
-                                }
+                                <div class="container">
+                                    <div class="row  mb-4">
+                                        <div class="col">
+                                            <h5>@module.Description</h5>
+
+                                            @if (User.IsInRole("Teacher"))
+                                            {
+                                                <a class="btn btn-primary" asp-action="Create" asp-controller="Activity" asp-route-moduleId="@module.Id">Add activity</a>
+                                                <a class="btn btn-primary" asp-controller="Document" asp-action="Create" asp-route-holderId="@module.Id" asp-route-userId="@UserManager.GetUserId(User)" asp-route-holderType="@moduletype">Add module File</a>
+                                            }
+                                        </div>
+                                        @if (module.Documents != null && module.Documents.Count > 0)
+                                        {
+                                            <div class="col">
+                                                <h5>Module Files:</h5>
+                                                @foreach (var doc in module.Documents)
+                                                {
+                                                    <div>
+                                                        <a asp-controller="Document" asp-action="Details" asp-route-id="@doc.Id">
+                                                            @Html.DisplayFor(modelItem => doc.Name)
+                                                        </a>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
                                 @if (module.Activities != null && module.Activities.Count() > 0)
                                 {
                                     <partial name="~/Views/Activity/ActivityListPartial.cshtml" for="@module.Activities" />
                                 }
+
+
                             </div>
                         </div>
                     </div>
