@@ -6,7 +6,9 @@ using AutoMapper;
 using Lexicon_LMS.Data;
 using Lexicon_LMS.Models;
 using Lexicon_LMS.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -135,5 +137,34 @@ namespace Lexicon_LMS.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var doc = await context.Documents
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (doc == null)
+            {
+                return NotFound();
+            }
+            var model = mapper.Map<DocumentViewModel>(doc);
+            var user = await context.Users.FindAsync(doc.UserId);
+            model.UpploaderName = user.Email;
+            return View(model);
+        }
+
+        // POST: Activity/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var doc = await context.Documents.FindAsync(id);
+            context.Documents.Remove(doc);
+            await context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index), "Courses");
+        }
     }
 }
