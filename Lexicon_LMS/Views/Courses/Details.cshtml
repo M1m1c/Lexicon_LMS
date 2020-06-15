@@ -1,9 +1,14 @@
 ﻿@model Lexicon_LMS.ViewModels.Courses.CourseDetailsViewModel
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
 
 @{
     ViewData["Title"] = "Details";
+    var coursetype = 1;
+    var moduletype = 2;
+    var activitytype = 3;
 }
 
 <h1>@Model.CourseName <span class="course-start-label">@Model.StartDate.ToShortDateString() - @Model.EndDate.ToShortDateString()</span></h1>
@@ -63,8 +68,7 @@
                 <div class="col-sm-12">
                     <a asp-controller="Module" asp-action="ModuleCreate" asp-route-CourseId="@Model.Id" class=" btn btn-primary mr-3">Add Module</a>
                     <a asp-action="AddParticipant" asp-route-courseId="@Model.Id" class="btn btn-primary mr-3">Add Participant</a>
-                    <button class="btn btn-primary mr-3">Add Course Files</button>
-
+                    <a asp-controller="Document" asp-action="Create" asp-route-holderId="@Model.Id" asp-route-userId="@UserManager.GetUserId(User)" asp-route-holderType="@coursetype" class="btn btn-primary mr-3">Add Course Files</a>
                 </div>
             </div>
         }
