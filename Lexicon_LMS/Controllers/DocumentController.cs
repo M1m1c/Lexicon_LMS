@@ -26,10 +26,16 @@ namespace Lexicon_LMS.Controllers
 
         
         // GET: Courses/Create
-        public async Task<IActionResult> Create(int? holderId, User user, HolderTypeEnum holderType)
+        public async Task<IActionResult> Create(int? holderId, string userId, HolderTypeEnum holderType)
         {
            
             if (await DoesTypeWithIdExist(holderType, holderId) == false)
+            {
+                return NotFound();
+            }
+            var user=await context.Users.FindAsync(userId);
+
+            if (user==null)
             {
                 return NotFound();
             }
@@ -37,7 +43,7 @@ namespace Lexicon_LMS.Controllers
             var doc = new DocumentViewModel()
             {
                 HolderId = holderId,
-                UserId = user.Id,
+                UserId = userId,
                 User = user,
                 HolderType = holderType
             };
@@ -81,9 +87,10 @@ namespace Lexicon_LMS.Controllers
         { 
             if (ModelState.IsValid)
             {
+                var user = await context.Users.FindAsync(viewModel.UserId);
                 var document = mapper.Map<Document>(viewModel);
                 document.UploadDate = DateTime.Now;
-                document.User = await context.Users.FindAsync(viewModel.UserId);
+                document.User = user;
                 switch (viewModel.HolderType)
                 {
                     case HolderTypeEnum.Course:
@@ -99,9 +106,10 @@ namespace Lexicon_LMS.Controllers
                         document.Activity = await context.Activities.FindAsync(viewModel.HolderId);
                         break;
                 }
-                await context.AddAsync(document);
+                await context.Documents.AddAsync(document);
+                user.Documents.Add(document);
                 await context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index),"Courses");
             }
             return View(viewModel);
         }
