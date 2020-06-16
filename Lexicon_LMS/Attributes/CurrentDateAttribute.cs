@@ -11,7 +11,8 @@ namespace Lexicon_LMS.Attributes
         public override bool IsValid(object value)
         {
             var dt = (DateTime)value;
-            if (dt >= DateTime.Now)
+   
+            if (dt >= DateTime.Today)
             {
                 return true;
             }
