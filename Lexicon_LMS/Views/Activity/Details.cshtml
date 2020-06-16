@@ -34,11 +34,11 @@
 
             </dl>
         </div>
-        @if (Model.Documents != null && Model.Documents.Count > 0)
+        @if (Model.TeacherDocuments != null && Model.TeacherDocuments.Count > 0)
         {
             <div class="col">
                 <h5>Activity Files:</h5>
-                @foreach (var doc in Model.Documents)
+                @foreach (var doc in Model.TeacherDocuments)
                 {
                     <div>
                         <a asp-controller="Document" asp-action="Details" asp-route-id="@doc.Id">
@@ -48,9 +48,9 @@
                 }
             </div>
         }
-       
+
     </div>
-   
+
     <h4>Description</h4>
     <p>@Html.DisplayFor(model => model.ActivityDescription)</p>
     <hr />
@@ -58,19 +58,66 @@
 
 <div class="container mb-5">
     <div class="row">
-        @* Student Hand ins go here *@
+        @if (User.IsInRole("Student") && Model.MyStudentDocument != null)
+        {
+            <h4 class="text-success col-12"> You Have handed in this assignment</h4>
+            <div class="row col-12">
+                <div class="col-sm-4">
+                    <a asp-controller="Document" asp-action="Details" asp-route-id="@Model.MyStudentDocument.Id">
+                        @Model.MyStudentDocument.Name
+                    </a>
+                </div>
+                <div class="col-sm-8">
+                    <a>@Model.MyStudentDocument.UploadDate</a>
+                </div>
+            </div>
+        }
     </div>
 </div>
+
+
+@if (User.IsInRole("Teacher") && Model.StudentDocuments != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Hand in
+                </th>
+                <th>
+                    Upploader
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var doc in Model.StudentDocuments)
+            {
+            <tr>
+                <td>
+                    <a asp-controller="Document" asp-action="Details" asp-route-id="@doc.Id">
+                        @Html.DisplayFor(modelItem => doc.Name)
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(model => doc.UpploaderName)
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
 
 <div>
     @if (User.IsInRole("Teacher"))
     {
         <a class="btn btn-warning" asp-controller="Activity" asp-action="Edit" asp-route-Id="@Model.Id" asp-route-courseId="@Model.CourseId">Edit Activity</a>
-        <a class="btn btn-primary mr-3" asp-controller="Document" asp-action="Create" asp-route-holderId="@Model.Id" asp-route-userId="@UserManager.GetUserId(User)" asp-route-holderType="@activitytype" >Add Activity File</a>
+        <a class="btn btn-primary mr-3" asp-controller="Document" asp-action="Create" asp-route-holderId="@Model.Id" asp-route-userId="@UserManager.GetUserId(User)" asp-route-holderType="@activitytype">Add Activity File</a>
     }
-    @if (User.IsInRole("Student") && Model.ActivityTypeName=="Assignment")
+
+    @if (User.IsInRole("Student") && Model.ActivityTypeName == "Assignment" && Model.MyStudentDocument == null)
     {
-        <a class="btn btn-success text-white">Hand in Assignment</a>
+        <a class="btn btn-success text-white" asp-controller="Document" asp-action="Create" asp-route-holderId="@Model.Id" asp-route-userId="@UserManager.GetUserId(User)" asp-route-holderType="@activitytype">Hand in Assignment</a>
     }
     <a class="btn btn-primary" asp-controller="Courses" asp-action="Details" asp-route-Id="@Model.CourseId">Back to course</a>
 </div>
