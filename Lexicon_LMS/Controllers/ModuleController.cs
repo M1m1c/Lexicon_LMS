@@ -104,30 +104,63 @@ namespace Lexicon_LMS.Controllers
             return View(moduleViewModel);
         }
 
-        // GET: Module/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Module/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
      
+
+        // GET: Activity/Edit/5
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var module = await context.Modules.FindAsync(id);
+            if (module == null)
+            {
+                return NotFound();
+            }
+            var model = mapper.Map<ModuleViewModel>(module);
+            return View(model);
+        }
+
+        // POST: Activity/Edit/5
+        [HttpPost]
+        [Authorize(Roles = "Teacher")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, ModuleViewModel model)
+        {
+            if (id != model.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                var module = mapper.Map<Module>(model);
+                try
+                {
+                    context.Update(module);
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+
+                    if (!context.Modules.Any(m => m.Id == id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Details),"Courses", new { Id=model.CourseId });
+            }
+            return View(model);
+        }
+
+
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Delete(int? id)
         {

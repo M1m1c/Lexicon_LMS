@@ -33,11 +33,12 @@
                             <h2 class="mb-0">
                                 <span class="module-start-label bg-transparent">@module.StartDate.ToShortDateString() - @module.EndDate.ToShortDateString() </span>
                                 <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#module-@module.Id" aria-expanded="true" aria-controls="module-@module.Id">
-                                    @module.ModuleName
+                                    <h3>@module.ModuleName</h3> 
                                 </button>
                                 @if (User.IsInRole("Teacher"))
                                 {
                                     <a class="btn btn-danger float-right" asp-action="Delete" asp-controller="Module" asp-route-Id="@module.Id">Delete Module</a>
+                                    <a class="btn btn-warning float-right mr-2" asp-action="Edit" asp-controller="Module" asp-route-Id="@module.Id">Edit Module</a>
                                 }
                             </h2>
                         </div>
