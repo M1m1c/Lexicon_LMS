@@ -111,7 +111,7 @@ namespace Lexicon_LMS.Controllers
                 await context.Documents.AddAsync(document);
                 user.Documents.Add(document);
                 await context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index),"Courses");
+                return RedirectToAction("Start","User");
             }
             return View(viewModel);
         }
