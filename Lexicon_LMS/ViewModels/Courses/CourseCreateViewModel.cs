@@ -17,7 +17,8 @@ namespace Lexicon_LMS.ViewModels.Courses
         [StringLength(1000)]
         [Display(Name = "Level")]
         public string Description { get; set; }
-        
+        public int DifficultyId { get; set; }
+
         [Required]
         [Display(Name = "Start date")]
         [DataType(DataType.Date)]

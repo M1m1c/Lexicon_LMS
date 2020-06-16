@@ -35,14 +35,15 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> Index()
         {
             var model = _context.Courses
-                    .Select(c => new CourseIndexViewModel
-                    {
-                        Id = c.Id,
-                        CourseName = c.CourseName,
-                        Description = c.Description,
-                        StartDate = c.StartDate,
-                        EndDate = c.EndDate
-                    });
+                                .Include(c => c.Difficulties)
+                                .Select(c => new CourseIndexViewModel
+                                {
+                                    Id = c.Id,
+                                    CourseName = c.CourseName,
+                                    Description = c.Difficulties.Level,
+                                    StartDate = c.StartDate,
+                                    EndDate = c.EndDate
+                                });
 
             return View(await model.ToListAsync());
         }
