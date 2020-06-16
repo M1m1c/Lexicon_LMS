@@ -43,7 +43,7 @@
                             </h2>
                         </div>
 
-                        <div id="module-@module.Id" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div id="module-@module.Id" class="@(module.Id != Model.ModuleId ? "collapse" : "Collapse show")"  aria-labelledby="headingOne" data-parent="#accordionExample">
                             <div class="card-body">
                                 <div class="container">
                                     <div class="row  mb-4">

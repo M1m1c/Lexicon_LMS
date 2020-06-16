@@ -49,7 +49,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Courses/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int? moduleId)
         {
             if (id == null)
             {
@@ -59,6 +59,11 @@ namespace Lexicon_LMS.Controllers
             model.Description = _context.Difficulties.Find(model.DifficultyId).Level;
             model.Documents =_mapper.Map<ICollection<DocumentViewModel>>(_context.Documents.Where(d => d.CourseId == model.Id));
 
+            if (moduleId != null)
+            {
+                model.ModuleId = moduleId;
+            }
+         
             foreach (var mod in model.Modules)
             {
                 var activeties = await _context.Activities.Where(a => a.ModuleId == mod.Id).ToListAsync();

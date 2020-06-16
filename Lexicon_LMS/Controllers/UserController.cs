@@ -28,6 +28,10 @@ namespace Lexicon_LMS.Controllers
             {
                 return RedirectToAction("TeacherStartPartial", "Teacher");
             }
+            else if(User.IsInRole("Student"))
+            {
+                return RedirectToAction("StudentStartPartial", "Student");
+            }
 
             return View();
         }

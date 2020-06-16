@@ -70,11 +70,14 @@ namespace Lexicon_LMS.Data
 
             foreach (var role in roleNames)
             {
-                if (await userManager.IsInRoleAsync(teacherUser, role)) continue;
+                if (role == "Teacher")
+                {
+                    if (await userManager.IsInRoleAsync(teacherUser, role)) continue;
 
-                var addToRoleResult = await userManager.AddToRoleAsync(teacherUser, role);
+                    var addToRoleResult = await userManager.AddToRoleAsync(teacherUser, role);
 
-                if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                    if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                }
             }
         }
 

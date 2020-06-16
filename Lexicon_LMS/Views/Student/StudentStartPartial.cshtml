@@ -1,5 +1,209 @@
-﻿
+﻿@model Lexicon_LMS.ViewModels.Student.StudentStartViewModel
 <h3>Student</h3>
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+
+<h5 class="mb-5">Course overview: @Model.CourseName</h5>
+
+<div class="  row justify-content-around mb-5">
+    <div class="col-12">
+        <h5>Ongoing Activites</h5>
+        <hr />
+        <div class="backcard border-success">
+            <ul>
+                @*//@{int i = 0; }*@
+                @if (Model != null)
+                {
+                    @if (Model.OnGoingActivites.Count() > 0)
+                    {
+
+                        @foreach (var activity in Model.OnGoingActivites)
+                        {
+
+                            <li>
+                                <h5> <a asp-controller="Activity" asp-action="Details" asp-route-courseId="@Model.CourseId" asp-route-id="@activity.Id">@activity.ActivityName</a></h5>
+                             </li>
+
+                        }
+                    }
+                    else
+                    {
+                        <li>No ongoing activites</li>
+                    }
+                }
+
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <div class="  row justify-content-around mb-5">
+        <div class="col-6">
+            <h5>Omgoing modules</h5>
+            <hr />
+            <div class="backcard border-success">
+                <ul>
+                    @*//@{int i = 0; }*@
+                    @if (Model != null)
+                    {
+                        @if (Model.OnGoingModules.Count > 0)
+                        {
+
+                            @foreach (var item in Model.OnGoingModules)
+                            {
+                                //i++;
+                                <li>
+                                    <h5> <a asp-controller="Courses" asp-action="Details" asp-route-moduleId="@item.Id" asp-route-id="@Model.CourseId">@item.ModuleName</a></h5>
+                                </li>
+
+                            }
+                        }
+                        else
+                        {
+                            <li>No ongoing modules</li>
+                        }
+                    }
+
+                </ul>
+            </div>
+        </div>
+        <div class="col-6">
+            <h5>Ongoing assignments</h5>
+            <hr />
+            <div class="backcard border-success ">
+                <ul>
+                    @*//@{int i = 0; }*@
+                    @if (Model != null)
+                    {
+                        @if (Model.OnGoingAssignments.Count() > 0)
+                        {
+
+                            @foreach (var activity in Model.OnGoingAssignments)
+                            {
+                              
+                              <li>
+                                  <h5> <a asp-controller="Activity" asp-action="Details" asp-route-courseId="@Model.CourseId" asp-route-id="@activity.Id">@activity.ActivityName</a> <span class="float-right">Last submittion date is @activity.EndDate.ToShortDateString()</span></h5>
+                              </li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No ongoing assignments</li>
+                        }
+                    }
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-around mb-5">
+        <div class="col-6">
+            <h5>Future modules</h5>
+            <hr />
+            <div class="backcard border-success ">
+                <ul>
+                    @if (Model != null)
+                    {
+                        @if (Model.FutureModules.Count > 0)
+                        {
+                            @foreach (var item in Model.FutureModules)
+                            {
+                                <li>
+                                    <h5> <a asp-controller="Courses" asp-action="Details" asp-route-moduleId="@item.Id" asp-route-id="@Model.CourseId">@item.ModuleName</a></h5>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No future modules</li>
+                        }
+                    }
+
+                </ul>
+            </div>
+        </div>
+        <div class="col-6">
+            <h5>Late Assignments</h5>
+            <hr />
+            <div class="backcard border-success ">
+                <ul>
+                    @*//@{int i = 0; }*@
+                    @if (Model != null)
+                    {
+                        @if (Model.LateAssignments.Count() > 0)
+                        {
+
+                            @foreach (var assignment in Model.LateAssignments)
+                            {
+                                    //i++;
+                                    <li>
+                                        <h5> <a asp-controller="Activity" asp-action="Details" asp-route-courseId="@Model.CourseId" asp-route-id="@assignment.Id">@assignment.ActivityName</a> <span class="float-right">Last submittion date is @assignment.EndDate.ToShortDateString()</span></h5>
+                                    </li>                             
+                            }
+                        }
+                        else
+                        {
+                            <li>You don't have any late assignments</li>
+                        }
+                    }
+                </ul>
+
+
+            </div>
+        </div>
+
+    </div>
+    <hr />
+    <div class="  row justify-content-around">
+        <div class="col-6">
+            <h5>Past modules</h5>
+            <hr />
+            <div class="backcard border-danger">
+                <ul>
+                    @if (Model != null)
+                    {
+                        @if (Model.PastModules.Count > 0)
+                        {
+                            @foreach (var item in Model.PastModules)
+                            {
+                                <li>
+                                    <h5> <a asp-controller="courses" asp-action="Details" asp-route-moduleId="@item.Id" asp-route-id="@Model.CourseId">@item.ModuleName</a></h5>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No past modules</li>
+                        }
+                    }
+
+                </ul>
+            </div>
+        </div>
+        <div class="col-6">
+            <h5>Submitted Assignments</h5>
+            <hr />
+            <div class="backcard border-success">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Course Name
+                            </th>
+                            <th>
+                                Module
+                            </th>
+                            <th>
+                                Activity
+                            </th>
+                            <th>
+                                Submittion Time
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
