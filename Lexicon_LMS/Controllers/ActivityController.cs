@@ -8,6 +8,7 @@ using Lexicon_LMS.Models;
 using Lexicon_LMS.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -18,10 +19,12 @@ namespace Lexicon_LMS.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
-        public ActivityController(ApplicationDbContext context, IMapper mapper)
+        private readonly UserManager<User> userManager;
+        public ActivityController(ApplicationDbContext context, IMapper mapper, UserManager<User> userManager)
         {
             this.context = context;
             this.mapper = mapper;
+            this.userManager = userManager;
         }
         // GET: Activity
         public ActionResult Index()
@@ -44,7 +47,36 @@ namespace Lexicon_LMS.Controllers
                 return NotFound();
             }
             var model = ToCourseActivityViewModel(activity, courseId);
-            model.Documents = mapper.Map<ICollection<DocumentViewModel>>(context.Documents.Where(d => d.ActivityId == id));
+
+            var documents =context.Documents.Where(d => d.ActivityId == activity.Id);
+
+            if (documents!=null)
+            {
+                foreach (var doc in documents)
+                {
+                    foreach (var user in context.Users)
+                    {
+                        if (await userManager.IsInRoleAsync(user, "Teacher") && doc.UserId == user.Id)
+                        {
+                            model.TeacherDocuments.Add(mapper.Map<DocumentViewModel>(doc));
+                        }else if (User.IsInRole("Teacher")&&await userManager.IsInRoleAsync(user, "Student") && doc.UserId == user.Id)
+                        {
+                            var temp = mapper.Map<DocumentViewModel>(doc);
+                            temp.UpploaderName = user.Email;
+                            model.StudentDocuments.Add(temp);
+                        }
+                    }
+                }
+            }
+
+            var tempdoc= documents.FirstOrDefault(d => d.UserId == userManager.GetUserId(User));
+
+            if (User.IsInRole("Student") && tempdoc != null)
+            {
+                model.MyStudentDocument = mapper.Map<DocumentViewModel>(tempdoc);
+            }
+            
+           // model.Documents = mapper.Map<ICollection<DocumentViewModel>>(context.Documents.Where(d => d.ActivityId == id));
 
             return View(model);
         }
@@ -192,6 +224,8 @@ namespace Lexicon_LMS.Controllers
         private CourseActivityViewModel ToCourseActivityViewModel(CourseActivity act,int? courseId)
         {
             CourseActivityViewModel ret = mapper.Map<CourseActivityViewModel>(act);
+            ret.TeacherDocuments = new List<DocumentViewModel>();
+            ret.StudentDocuments = new List<DocumentViewModel>();
             ret.ActivityTypeName = context.ActivityTypes.Find(act.ActivityTypeId).Name;
             ret.ActivityTypes = GetActivityTypesForDropDown();
             ret.CourseId = (int)courseId;
