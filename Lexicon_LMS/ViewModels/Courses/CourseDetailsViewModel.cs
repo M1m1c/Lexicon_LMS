@@ -12,7 +12,10 @@ namespace Lexicon_LMS.ViewModels.Courses
     {
         public int Id { get; set; }
         public string CourseName { get; set; }
+
+        [Display(Name = "Level")]
         public string Description { get; set; }
+        public int DifficultyId { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]

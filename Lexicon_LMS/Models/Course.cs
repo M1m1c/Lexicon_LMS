@@ -10,6 +10,7 @@ namespace Lexicon_LMS.Models
     {
         public int Id { get; set; }
         public string CourseName { get; set; }
+        [Display(Name = "Level")]
         public string Description { get; set; }
         public int DifficultyId { get; set; }
         public Difficulty Difficulties { get; set; }

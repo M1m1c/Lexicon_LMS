@@ -56,7 +56,7 @@ namespace Lexicon_LMS.Controllers
                 return NotFound();
             }
             var model = await _unitOfWork.CourseRepository.GetDetailsViewModelAsync(id);
-
+            model.Description = _context.Difficulties.Find(model.DifficultyId).Level;
             model.Documents =_mapper.Map<ICollection<DocumentViewModel>>(_context.Documents.Where(d => d.CourseId == model.Id));
 
             foreach (var mod in model.Modules)
@@ -128,7 +128,7 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CourseName,Description,StartDate,EndDate")] Course course)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CourseName,Description,DifficultyId,StartDate,EndDate")] Course course)
         {
             if (id != course.Id)
             {
