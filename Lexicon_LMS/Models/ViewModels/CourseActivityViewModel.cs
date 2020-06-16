@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,7 +12,11 @@ namespace Lexicon_LMS.Models.ViewModels
         public int Id { get; set; }
         public string ActivityName { get; set; }
         public string ActivityDescription { get; set; }
+        [DisplayFormat(DataFormatString = "{0:D}")]
+        [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
+        [DisplayFormat(DataFormatString = "{0:D}")]
+        [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
         public int CourseId { get; set; }
@@ -20,6 +25,6 @@ namespace Lexicon_LMS.Models.ViewModels
         public string ActivityTypeId { get; set; }
         public IEnumerable<SelectListItem> ActivityTypes { get; set; }
 
-        public ICollection<Document> Documents { get; set; }
+        public ICollection<DocumentViewModel> Documents { get; set; }
     }
 }

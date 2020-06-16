@@ -30,6 +30,8 @@ namespace Lexicon_LMS.Data
                 await SeedTeacher(userManager, roleManager, roleNames, teacherEmail, teacherPassword);
 
                 await SeedActiityTypes(context);
+
+                await SeedDifficulties(context);
             }
         }
 
@@ -68,11 +70,14 @@ namespace Lexicon_LMS.Data
 
             foreach (var role in roleNames)
             {
-                if (await userManager.IsInRoleAsync(teacherUser, role)) continue;
+                if (role == "Teacher")
+                {
+                    if (await userManager.IsInRoleAsync(teacherUser, role)) continue;
 
-                var addToRoleResult = await userManager.AddToRoleAsync(teacherUser, role);
+                    var addToRoleResult = await userManager.AddToRoleAsync(teacherUser, role);
 
-                if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                    if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                }
             }
         }
 
@@ -88,6 +93,23 @@ namespace Lexicon_LMS.Data
                 new ActivityType { Name = "E-Learning" },
                 new ActivityType { Name = "Lecture" },
                 new ActivityType { Name = "Exam" }
+                );
+
+            await context.SaveChangesAsync();
+        }
+
+        private static async Task SeedDifficulties(ApplicationDbContext context)
+        {
+            if (context.Difficulties.Any())
+            {
+                return;
+            }
+
+            context.Difficulties.AddRange(
+                new Difficulty { Level = "Beginner" },
+                new Difficulty { Level = "Intermediate" },
+                new Difficulty { Level = "Advanced" },
+                new Difficulty { Level = "Professional" }
                 );
 
             await context.SaveChangesAsync();

@@ -12,9 +12,12 @@ namespace Lexicon_LMS.ViewModels.Courses
     {
         public int Id { get; set; }
         public string CourseName { get; set; }
-        public string Description { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+        [Display(Name = "Level")]
+        public string Description { get; set; }
+        public int DifficultyId { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
@@ -25,6 +28,8 @@ namespace Lexicon_LMS.ViewModels.Courses
         public ICollection<ModuleViewModel> Modules { get; set; }
 
         public int? ModuleId { get; set; }
+
+        public ICollection<DocumentViewModel> Documents { get; set; }
 
     }
 }

@@ -35,14 +35,15 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> Index()
         {
             var model = _context.Courses
-                    .Select(c => new CourseIndexViewModel
-                    {
-                        Id = c.Id,
-                        CourseName = c.CourseName,
-                        Description = c.Description,
-                        StartDate = c.StartDate,
-                        EndDate = c.EndDate
-                    });
+                                .Include(c => c.Difficulties)
+                                .Select(c => new CourseIndexViewModel
+                                {
+                                    Id = c.Id,
+                                    CourseName = c.CourseName,
+                                    Description = c.Difficulties.Level,
+                                    StartDate = c.StartDate,
+                                    EndDate = c.EndDate
+                                });
 
             return View(await model.ToListAsync());
         }
@@ -55,6 +56,8 @@ namespace Lexicon_LMS.Controllers
                 return NotFound();
             }
             var model = await _unitOfWork.CourseRepository.GetDetailsViewModelAsync(id);
+            model.Description = _context.Difficulties.Find(model.DifficultyId).Level;
+            model.Documents =_mapper.Map<ICollection<DocumentViewModel>>(_context.Documents.Where(d => d.CourseId == model.Id));
 
             if (moduleId != null)
             {
@@ -65,6 +68,7 @@ namespace Lexicon_LMS.Controllers
             {
                 var activeties = await _context.Activities.Where(a => a.ModuleId == mod.Id).ToListAsync();
                 mod.Activities = _mapper.Map<IEnumerable<CourseActivityViewModel>>(activeties);
+                mod.Documents = _mapper.Map<ICollection<DocumentViewModel>>(_context.Documents.Where(d => d.ModuleId == mod.Id));
 
                 foreach (var act in mod.Activities)
                 {
@@ -129,7 +133,7 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CourseName,Description,StartDate,EndDate")] Course course)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CourseName,Description,DifficultyId,StartDate,EndDate")] Course course)
         {
             if (id != course.Id)
             {
@@ -169,6 +173,7 @@ namespace Lexicon_LMS.Controllers
             }
 
             var course = await _context.Courses
+                .Include(c => c.Difficulties)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (course == null)
             {

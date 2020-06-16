@@ -1,9 +1,14 @@
 ﻿@model Lexicon_LMS.ViewModels.Courses.CourseDetailsViewModel
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
 
 @{
     ViewData["Title"] = "Details";
+    var coursetype = 1;
+    var moduletype = 2;
+
 }
 
 <h1>@Model.CourseName <span class="course-start-label">@Model.StartDate.ToShortDateString() - @Model.EndDate.ToShortDateString()</span></h1>
@@ -23,37 +28,83 @@
             <div class="accordion" id="accordionExample">
                 @foreach (var module in Model.Modules)
                 {
-                <div class="card bg-transparent">
-                    <div class="card-header" id="headingOne">
-                        <h2 class="mb-0">
-                            <span class="module-start-label bg-transparent">@module.StartDate.ToShortDateString() - @module.EndDate.ToShortDateString() </span>
-                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#module-@module.Id" aria-expanded="true" aria-controls="module-@module.Id">
-                                @module.ModuleName
-                            </button>
-                            @if (User.IsInRole("Teacher"))
-                            {
-                                <a class="btn btn-danger float-right" asp-action="Delete" asp-controller="Module" asp-route-Id="@module.Id">Delete Module</a>
-                            }
-                        </h2>
-                    </div> 
-                    <div id="module-@module.Id" class="@(module.Id != Model.ModuleId ? "collapse" : "Collapse show")" aria-labelledby="headingOne" data-parent="#accordionExample">
-                        <div class="card-body">
-                            <p>@module.Description</p>
-                            @if (User.IsInRole("Teacher"))
-                            {
-                                <a class="btn btn-primary mb-4" asp-action="Create" asp-controller="Activity" asp-route-moduleId="@module.Id">Add activity</a>
-                            }
-                            @if (module.Activities != null && module.Activities.Count() > 0)
-                            {
-                                <partial name="~/Views/Activity/ActivityListPartial.cshtml" for="@module.Activities" />
-                            }
+                    <div class="card bg-transparent">
+                        <div class="card-header" id="headingOne">
+                            <h2 class="mb-0">
+                                <span class="module-start-label bg-transparent">@module.StartDate.ToShortDateString() - @module.EndDate.ToShortDateString() </span>
+                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#module-@module.Id" aria-expanded="true" aria-controls="module-@module.Id">
+                                    <h3>@module.ModuleName</h3> 
+                                </button>
+                                @if (User.IsInRole("Teacher"))
+                                {
+                                    <a class="btn btn-danger float-right" asp-action="Delete" asp-controller="Module" asp-route-Id="@module.Id">Delete Module</a>
+                                    <a class="btn btn-warning float-right mr-2" asp-action="Edit" asp-controller="Module" asp-route-Id="@module.Id">Edit Module</a>
+                                }
+                            </h2>
+                        </div>
+
+                        <div id="module-@module.Id" class="@(module.Id != Model.ModuleId ? "collapse" : "Collapse show")"  aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body">
+                                <div class="container">
+                                    <div class="row  mb-4">
+                                        <div class="col">
+                                            <h5>@module.Description</h5>
+
+                                            @if (User.IsInRole("Teacher"))
+                                            {
+                                                <a class="btn btn-primary" asp-action="Create" asp-controller="Activity" asp-route-moduleId="@module.Id">Add activity</a>
+                                                <a class="btn btn-primary" asp-controller="Document" asp-action="Create" asp-route-holderId="@module.Id" asp-route-userId="@UserManager.GetUserId(User)" asp-route-holderType="@moduletype">Add module File</a>
+                                            }
+                                        </div>
+                                        @if (module.Documents != null && module.Documents.Count > 0)
+                                        {
+                                            <div class="col">
+                                                <h5>Module Files:</h5>
+                                                @foreach (var doc in module.Documents)
+                                                {
+                                                    <div>
+                                                        <a asp-controller="Document" asp-action="Details" asp-route-id="@doc.Id">
+                                                            @Html.DisplayFor(modelItem => doc.Name)
+                                                        </a>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                @if (module.Activities != null && module.Activities.Count() > 0)
+                                {
+                                    <partial name="~/Views/Activity/ActivityListPartial.cshtml" for="@module.Activities" />
+                                }
+
+
+                            </div>
                         </div>
                     </div>
-                </div>
                 }
             </div>
         </div>
     </div>
+
+
+    @if (Model.Documents != null && Model.Documents.Count > 0)
+    {
+        <h5 class="mt-5">Course Files:</h5>
+        <div>
+            @foreach (var doc in Model.Documents)
+            {
+                <div>
+
+                    <a asp-controller="Document" asp-action="Details" asp-route-id="@doc.Id">
+                        @Html.DisplayFor(modelItem => doc.Name)
+                    </a>
+
+                </div>
+            }
+        </div>
+    }
+
     @if (SignInManager.IsSignedIn(User))
     {
         @if (User.IsInRole("Teacher"))
@@ -62,7 +113,7 @@
                 <div class="col-sm-12">
                     <a asp-controller="Module" asp-action="ModuleCreate" asp-route-CourseId="@Model.Id" class=" btn btn-primary mr-3">Add Module</a>
                     <a asp-action="AddParticipant" asp-route-courseId="@Model.Id" class="btn btn-primary mr-3">Add Participant</a>
-                    <button class="btn btn-primary mr-3">Add Course Files</button>
+                    <a class="btn btn-primary mr-3" asp-controller="Document" asp-action="Create" asp-route-holderId="@Model.Id" asp-route-userId="@UserManager.GetUserId(User)" asp-route-holderType="@coursetype">Add Course Files</a>
 
                 </div>
             </div>
@@ -75,7 +126,7 @@
 {
     @if (User.IsInRole("Teacher"))
     {
-        <div>
+        <div class="mb-5">
             <a class="btn btn-info" asp-action="Index">All Courses</a>
             <a class="btn btn-danger float-right" asp-action="Delete" asp-route-id="@Model.Id">Delete Course</a>
             <a class="btn btn-warning float-right mr-2" asp-action="Edit" asp-route-id="@Model.Id">Edit Course</a>

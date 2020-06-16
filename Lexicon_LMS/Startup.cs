@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using AutoMapper;
 using Lexicon_LMS.Repositories;
+using Lexicon_LMS.Services;
 
 namespace Lexicon_LMS
 {
@@ -43,6 +44,9 @@ namespace Lexicon_LMS
 
             services.AddRazorPages();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ILookupService, LookupService>();
+            services.AddMvc();
+
 
             services.AddAutoMapper(typeof(MapperProfile));
          
