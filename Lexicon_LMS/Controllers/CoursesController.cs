@@ -168,6 +168,7 @@ namespace Lexicon_LMS.Controllers
             }
 
             var course = await _context.Courses
+                .Include(c => c.Difficulties)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (course == null)
             {

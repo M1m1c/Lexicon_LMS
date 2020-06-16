@@ -9,7 +9,10 @@ namespace Lexicon_LMS.Models
     public class Course
     {
         public int Id { get; set; }
+
+        [Display(Name = "Course")]
         public string CourseName { get; set; }
+        
         [Display(Name = "Level")]
         public string Description { get; set; }
         public int DifficultyId { get; set; }
@@ -17,10 +20,12 @@ namespace Lexicon_LMS.Models
 
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
+        [Display(Name = "Start date")]
         public DateTime StartDate { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
+        [Display(Name = "End date")]
         public DateTime EndDate { get; set; }
         public ICollection<Module> Modules { get; set; }
         public ICollection<User> Users { get; set; }
