@@ -121,7 +121,7 @@ namespace Lexicon_LMS.Controllers
                 return NotFound();
             }
             var model = mapper.Map<ModuleViewModel>(module);
-            return View(module);
+            return View(model);
         }
 
         // POST: Activity/Edit/5
