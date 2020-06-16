@@ -20,7 +20,7 @@ namespace Lexicon_LMS.Attributes
             if(startDate == null)
                 return new ValidationResult("Wrong");
 
-            if ((DateTime)startDate < (DateTime)value)
+            if ((DateTime)startDate <= (DateTime)value)
                 return ValidationResult.Success;
             return new ValidationResult("End date must be after start date");
         }

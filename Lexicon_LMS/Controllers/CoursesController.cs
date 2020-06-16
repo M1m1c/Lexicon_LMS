@@ -48,7 +48,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Courses/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int? moduleId)
         {
             if (id == null)
             {
@@ -56,6 +56,11 @@ namespace Lexicon_LMS.Controllers
             }
             var model = await _unitOfWork.CourseRepository.GetDetailsViewModelAsync(id);
 
+            if (moduleId != null)
+            {
+                model.ModuleId = moduleId;
+            }
+         
             foreach (var mod in model.Modules)
             {
                 var activeties = await _context.Activities.Where(a => a.ModuleId == mod.Id).ToListAsync();
