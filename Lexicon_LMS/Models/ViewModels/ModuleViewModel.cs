@@ -27,6 +27,7 @@ namespace Lexicon_LMS.Models.ViewModels
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
         [AfterStartDate()]
+        [Remote(action: "VerifyEndDate", controller: "Module", AdditionalFields = nameof(CourseId))]
         public DateTime EndDate { get; set; }
 
         public int CourseId { get; set; }
