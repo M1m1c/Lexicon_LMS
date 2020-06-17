@@ -217,7 +217,7 @@ namespace Lexicon_LMS.Controllers
 
             if ((endDate - course.EndDate).TotalSeconds > 0)
             {
-                return Json($"Module end date can't be after course End date");
+                return Json($"Module End date can't be after course End date");
             }
             return Json(true);
         }

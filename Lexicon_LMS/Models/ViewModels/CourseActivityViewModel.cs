@@ -12,9 +12,11 @@ namespace Lexicon_LMS.Models.ViewModels
         public int Id { get; set; }
         public string ActivityName { get; set; }
         public string ActivityDescription { get; set; }
+
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
+
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
