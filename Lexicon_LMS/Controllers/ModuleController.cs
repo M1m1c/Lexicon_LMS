@@ -210,6 +210,16 @@ namespace Lexicon_LMS.Controllers
         }
 
 
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyEndDate(DateTime endDate, int courseId)
+        {
+            var course = unitOfWork.CourseRepository.GetCourseById(courseId);
 
+            if ((endDate - course.EndDate).TotalSeconds > 0)
+            {
+                return Json($"Module end date can't be after course End date");
+            }
+            return Json(true);
+        }
     }
 }
