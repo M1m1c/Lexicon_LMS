@@ -57,7 +57,8 @@
                                                          view-data='@new ViewDataDictionary(ViewData){
                                                 { "type", moduletype},
                                                 {"userId",UserManager.GetUserId(User) },
-                                                {"modelId",module.Id }}' />
+                                                {"modelId",module.Id },
+                                                {"courseId", Model.Id}}' />
                                             }
                                         </div>
                                         @if (module.Documents != null && module.Documents.Count > 0)
@@ -121,7 +122,8 @@
                              view-data='@new ViewDataDictionary(ViewData){
                      { "type", coursetype},
                      {"userId",UserManager.GetUserId(User) },
-                     {"modelId",Model.Id }}' />
+                     {"modelId",Model.Id },
+                     {"courseId", Model.Id}}' />
                 </div>
             </div>
         }
