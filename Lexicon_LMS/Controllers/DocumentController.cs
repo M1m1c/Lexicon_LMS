@@ -51,17 +51,55 @@ namespace Lexicon_LMS.Controllers
                 return NotFound();
             }
 
-            Document document = await InstantiateDocument(holderId, holderType, file, user);
+            var document = new Document()
+            {
+                UserId = user.Id,
+                User = user,
+                Name = file.FileName,
+                UploadDate = DateTime.Now
+            };
+
+            string path = "";
+
+            switch (holderType)
+            {
+                case HolderTypeEnum.Course:
+                    document.CourseId = holderId;
+                    document.Course = await context.Courses.FindAsync(holderId);
+                    path = GetPath(document.Course, null, null, user.Id);
+                    break;
+                case HolderTypeEnum.Module:
+                    document.ModuleId = holderId;
+                    document.Module = await context.Modules.FindAsync(holderId);
+                    var mCourse = await context.Courses.FindAsync(document.Module.CourseId);
+                    path = GetPath(mCourse, document.Module, null, user.Id);
+                    break;
+                case HolderTypeEnum.Activity:
+                    document.ActivityId = holderId;
+                    document.Activity = await context.Activities.FindAsync(holderId);
+                    var aModule = await context.Modules.FindAsync(document.Activity.ModuleId);
+                    var aCourse = await context.Courses.FindAsync(aModule.CourseId);
+                    path = GetPath(aCourse, aModule, document.Activity, user.Id);
+                    break;
+            }
+
+            document.FilePath = $"{path}{file.FileName}";
 
             if (string.IsNullOrEmpty(document.FilePath))
             {
                 return NotFound();
             }
-           
+
+            if (Directory.Exists(path)==false)
+            {
+                Directory.CreateDirectory(path);
+            }
+
             using (var stream = new FileStream(document.FilePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
+
             var alreadyExisitngDoc = context.Documents.FirstOrDefault(d => d.FilePath == document.FilePath);
             if (alreadyExisitngDoc==null)
             {
