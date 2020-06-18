@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,6 +18,7 @@ namespace Lexicon_LMS.Models.ViewModels
 
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
+        [Remote(action: "VerifyActivityStartDate", controller: "Activity", AdditionalFields = nameof(ModuleId))]
         public DateTime StartDate { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:D}")]

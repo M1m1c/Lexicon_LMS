@@ -245,7 +245,18 @@ namespace Lexicon_LMS.Controllers
         }
 
 
-        
-        
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyActivityStartDate(DateTime startDate, int moduleId)
+        {
+            var module = context.Modules.FirstOrDefault();
+
+            if ((startDate > module.StartDate))
+            {
+                return Json($"Module End date can't be after course End date");
+            }
+            return Json(true);
+        }
+
+
     }
 }
