@@ -271,6 +271,26 @@ namespace Lexicon_LMS.Controllers
             return RedirectToAction(nameof(Index), "Courses");
         }
 
-        
+        [HttpGet("download")]
+        public async Task<IActionResult> Download(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var doc = await context.Documents
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (doc == null)
+            {
+                return NotFound();
+            }
+
+            var net = new System.Net.WebClient();
+            var data = net.DownloadData(doc.FilePath);
+            var content = new System.IO.MemoryStream(data);
+            return File(content, "APPLICATION/octet-stream", doc.Name);
+        }
     }
 }
