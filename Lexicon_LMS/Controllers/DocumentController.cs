@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -35,7 +36,7 @@ namespace Lexicon_LMS.Controllers
         // GET: Courses/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int? holderId, string userId, HolderTypeEnum holderType, IFormFile file, string url)
+        public async Task<IActionResult> Create(int? holderId, HolderTypeEnum holderType,string userId, IFormFile file, string url)
         {
 
             if (await DoesTypeWithIdExist(holderType, holderId) == false)
@@ -50,54 +51,77 @@ namespace Lexicon_LMS.Controllers
                 return NotFound();
             }
 
-            var docViewModel = new DocumentViewModel()
+            Document document = await InstantiateDocument(holderId, holderType, file, user);
+
+            if (string.IsNullOrEmpty(document.FilePath))
             {
-                HolderId = holderId,
-                UserId = userId,
+                return NotFound();
+            }
+           
+            using (var stream = new FileStream(document.FilePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+            var alreadyExisitngDoc = context.Documents.FirstOrDefault(d => d.FilePath == document.FilePath);
+            if (alreadyExisitngDoc==null)
+            {
+                await context.Documents.AddAsync(document);
+                user.Documents.Add(document);
+                
+            }
+            else
+            {
+                try
+                {
+                    alreadyExisitngDoc.UploadDate = DateTime.Now;
+                    context.Documents.Update(alreadyExisitngDoc);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            await context.SaveChangesAsync();
+            return Redirect(url);
+        }
+
+        private async Task<Document> InstantiateDocument(int? holderId, HolderTypeEnum holderType, IFormFile file, User user)
+        {
+            var document = new Document()
+            {
+                UserId = user.Id,
                 User = user,
-                HolderType = holderType,
                 Name = file.FileName,
                 UploadDate = DateTime.Now
             };
 
-            string path="";
-            var document = mapper.Map<Document>(docViewModel);
-
-            switch (docViewModel.HolderType)
+            string path = "";
+            
+            switch (holderType)
             {
                 case HolderTypeEnum.Course:
-                    document.CourseId = docViewModel.HolderId;
-                    document.Course = await context.Courses.FindAsync(docViewModel.HolderId);
-                    path = GetPath(document.Course,null,null,user.Id);
+                    document.CourseId = holderId;
+                    document.Course = await context.Courses.FindAsync(holderId);
+                    path = GetPath(document.Course, null, null, user.Id);
                     break;
                 case HolderTypeEnum.Module:
-                    document.ModuleId = docViewModel.HolderId;
-                    document.Module = await context.Modules.FindAsync(docViewModel.HolderId);
+                    document.ModuleId = holderId;
+                    document.Module = await context.Modules.FindAsync(holderId);
                     var mCourse = await context.Courses.FindAsync(document.Module.CourseId);
                     path = GetPath(mCourse, document.Module, null, user.Id);
                     break;
                 case HolderTypeEnum.Activity:
-                    document.ActivityId = docViewModel.HolderId;
-                    document.Activity = await context.Activities.FindAsync(docViewModel.HolderId);
-                    var aModule= await context.Modules.FindAsync(document.Activity.ModuleId);
+                    document.ActivityId = holderId;
+                    document.Activity = await context.Activities.FindAsync(holderId);
+                    var aModule = await context.Modules.FindAsync(document.Activity.ModuleId);
                     var aCourse = await context.Courses.FindAsync(aModule.CourseId);
                     path = GetPath(aCourse, aModule, document.Activity, user.Id);
                     break;
             }
+            document.FilePath = $"{path}{file.FileName}";
 
-            if (string.IsNullOrEmpty(path))
-            {
-                return NotFound();
-            }
-
-            var filePath = $"{path}\\{file.FileName}";
-            //TODO check if the directory exists, otherwise create it
-
-            await context.Documents.AddAsync(document);
-            user.Documents.Add(document);
-            await context.SaveChangesAsync();
-
-            return RedirectToPage(url);
+            return document;
         }
 
         private async Task<bool> DoesTypeWithIdExist(HolderTypeEnum holderType, int? holderId)
@@ -127,67 +151,31 @@ namespace Lexicon_LMS.Controllers
             return retflag;
         }
 
-        private string GetPath(Course course,Module module,CourseActivity activity, string userId)
+        private string GetPath(Course course, Module module, CourseActivity activity, string userId)
         {
-            var basePath = hostingEnvironment.ContentRootPath + "\\Files";
-            string path="";
-            if (course != null && module != null && activity != null) 
+            var basePath = Directory.GetCurrentDirectory() + "\\wwwroot" + "\\Files";
+            string path = "";
+            if (course != null && module != null && activity != null)
             {
                 //create the directory using /course/module/activity/userId/
-                path = $"{basePath}\\{course.CourseName}\\{module.ModuleName}\\{activity.ActivityName}\\{userId}";
-                
+                path = $"{basePath}\\{course.CourseName}\\{module.ModuleName}\\{activity.ActivityName}\\{userId}\\";
+
             }
             else if (course != null && module != null)
             {
                 //create the directory using /course/module/userId/
-                path = $"{basePath}\\{course.CourseName}\\{module.ModuleName}\\{userId}";
+                path = $"{basePath}\\{course.CourseName}\\{module.ModuleName}\\{userId}\\";
             }
             else if (course != null)
             {
                 //create the directory using /course/userId/
-                path = $"{basePath}\\{course.CourseName}\\{userId}";
+                path = $"{basePath}\\{course.CourseName}\\{userId}\\";
             }
-           
+
             return path;
         }
 
-        // POST: Courses/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create(DocumentViewModel viewModel)
-        //{
-        //    string path = hostingEnvironment.ContentRootPath;
-        //    if (ModelState.IsValid)
-        //    {
-        //        var user = await context.Users.FindAsync(viewModel.UserId);
-        //        var document = mapper.Map<Document>(viewModel);
-        //        document.UploadDate = DateTime.Now;
-        //        document.User = user;
-        //        switch (viewModel.HolderType)
-        //        {
-        //            case HolderTypeEnum.Course:
-        //                document.CourseId = viewModel.HolderId;
-        //                document.Course = await context.Courses.FindAsync(viewModel.HolderId);
-        //                break;
-        //            case HolderTypeEnum.Module:
-        //                document.ModuleId = viewModel.HolderId;
-        //                document.Module = await context.Modules.FindAsync(viewModel.HolderId);
-        //                break;
-        //            case HolderTypeEnum.Activity:
-        //                document.ActivityId = viewModel.HolderId;
-        //                document.Activity = await context.Activities.FindAsync(viewModel.HolderId);
-        //                break;
-        //        }
-        //        await context.Documents.AddAsync(document);
-        //        user.Documents.Add(document);
-        //        await context.SaveChangesAsync();
-        //        return RedirectToAction("Start", "User");
-        //    }
-        //    return View(viewModel);
-        //}
-
+      
 
         // GET: Activity/Details/5
         public async Task<IActionResult> Details(int? id)
