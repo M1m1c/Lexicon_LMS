@@ -33,13 +33,12 @@ namespace Lexicon_LMS.Controllers
         }
 
 
-        // GET: Courses/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int? holderId, HolderTypeEnum holderType,string userId, IFormFile file, string url)
+        public async Task<IActionResult> Create(int? holderId, HolderTypeEnum holderType,string userId, IFormFile file, string url, int courseId)
         {
 
-            if (await DoesTypeWithIdExist(holderType, holderId) == false)
+            if (await DoesHolderTypeWithIdExist(holderType, holderId) == false)
             {
                 return NotFound();
             }
@@ -51,37 +50,9 @@ namespace Lexicon_LMS.Controllers
                 return NotFound();
             }
 
-            var document = new Document()
-            {
-                UserId = user.Id,
-                User = user,
-                Name = file.FileName,
-                UploadDate = DateTime.Now
-            };
+            Document document = InstantiateDocument(holderId, holderType, file, user);
 
-            string path = "";
-
-            switch (holderType)
-            {
-                case HolderTypeEnum.Course:
-                    document.CourseId = holderId;
-                    document.Course = await context.Courses.FindAsync(holderId);
-                    path = GetPath(document.Course, null, null, user.Id);
-                    break;
-                case HolderTypeEnum.Module:
-                    document.ModuleId = holderId;
-                    document.Module = await context.Modules.FindAsync(holderId);
-                    var mCourse = await context.Courses.FindAsync(document.Module.CourseId);
-                    path = GetPath(mCourse, document.Module, null, user.Id);
-                    break;
-                case HolderTypeEnum.Activity:
-                    document.ActivityId = holderId;
-                    document.Activity = await context.Activities.FindAsync(holderId);
-                    var aModule = await context.Modules.FindAsync(document.Activity.ModuleId);
-                    var aCourse = await context.Courses.FindAsync(aModule.CourseId);
-                    path = GetPath(aCourse, aModule, document.Activity, user.Id);
-                    break;
-            }
+            string path = await DeterminePath(holderId, holderType, user);
 
             document.FilePath = $"{path}{file.FileName}";
 
@@ -90,7 +61,7 @@ namespace Lexicon_LMS.Controllers
                 return NotFound();
             }
 
-            if (Directory.Exists(path)==false)
+            if (Directory.Exists(path) == false)
             {
                 Directory.CreateDirectory(path);
             }
@@ -101,11 +72,12 @@ namespace Lexicon_LMS.Controllers
             }
 
             var alreadyExisitngDoc = context.Documents.FirstOrDefault(d => d.FilePath == document.FilePath);
-            if (alreadyExisitngDoc==null)
+
+            if (alreadyExisitngDoc == null)
             {
                 await context.Documents.AddAsync(document);
                 user.Documents.Add(document);
-                
+
             }
             else
             {
@@ -120,11 +92,20 @@ namespace Lexicon_LMS.Controllers
                     throw;
                 }
             }
+
+            string courseRoute = "";
+            if (holderType==HolderTypeEnum.Activity)
+            {
+                courseRoute = $"?courseId={courseId}";
+            }
+
             await context.SaveChangesAsync();
-            return Redirect(url);
+            TempData["AlertMsg"] = "Document Uploaded";
+
+            return Redirect($"https://{url}{courseRoute}");
         }
 
-        private async Task<Document> InstantiateDocument(int? holderId, HolderTypeEnum holderType, IFormFile file, User user)
+        private static Document InstantiateDocument(int? holderId, HolderTypeEnum holderType, IFormFile file, User user)
         {
             var document = new Document()
             {
@@ -134,35 +115,24 @@ namespace Lexicon_LMS.Controllers
                 UploadDate = DateTime.Now
             };
 
-            string path = "";
-            
+
             switch (holderType)
             {
                 case HolderTypeEnum.Course:
                     document.CourseId = holderId;
-                    document.Course = await context.Courses.FindAsync(holderId);
-                    path = GetPath(document.Course, null, null, user.Id);
                     break;
                 case HolderTypeEnum.Module:
                     document.ModuleId = holderId;
-                    document.Module = await context.Modules.FindAsync(holderId);
-                    var mCourse = await context.Courses.FindAsync(document.Module.CourseId);
-                    path = GetPath(mCourse, document.Module, null, user.Id);
                     break;
                 case HolderTypeEnum.Activity:
                     document.ActivityId = holderId;
-                    document.Activity = await context.Activities.FindAsync(holderId);
-                    var aModule = await context.Modules.FindAsync(document.Activity.ModuleId);
-                    var aCourse = await context.Courses.FindAsync(aModule.CourseId);
-                    path = GetPath(aCourse, aModule, document.Activity, user.Id);
                     break;
             }
-            document.FilePath = $"{path}{file.FileName}";
 
             return document;
         }
 
-        private async Task<bool> DoesTypeWithIdExist(HolderTypeEnum holderType, int? holderId)
+        private async Task<bool> DoesHolderTypeWithIdExist(HolderTypeEnum holderType, int? holderId)
         {
             bool retflag = false;
             switch (holderType)
@@ -187,6 +157,30 @@ namespace Lexicon_LMS.Controllers
                     break;
             }
             return retflag;
+        }
+
+        private async Task<string> DeterminePath(int? holderId, HolderTypeEnum holderType, User user)
+        {
+            Course course = null;
+            Module module = null;
+            CourseActivity activity = null;
+            switch (holderType)
+            {
+                case HolderTypeEnum.Course:
+                    course = await context.Courses.FindAsync(holderId);
+                    break;
+                case HolderTypeEnum.Module:
+                    module = await context.Modules.FindAsync(holderId);
+                    course = await context.Courses.FindAsync(module.CourseId);
+                    break;
+                case HolderTypeEnum.Activity:
+                    activity = await context.Activities.FindAsync(holderId);
+                    module = await context.Modules.FindAsync(activity.ModuleId);
+                    course = await context.Courses.FindAsync(module.CourseId);
+                    break;
+            }
+
+            return GetPath(course, module, activity, user.Id);
         }
 
         private string GetPath(Course course, Module module, CourseActivity activity, string userId)
@@ -260,9 +254,43 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var doc = await context.Documents.FindAsync(id);
+            if (System.IO.File.Exists(doc.FilePath))
+            {
+                System.IO.File.Delete(doc.FilePath);
+            }
+
+            var path = doc.FilePath.Replace(doc.Name,"");
+
+            if (Directory.GetFiles(path).Length == 0 && Directory.GetDirectories(path).Length == 0)
+            {
+                Directory.Delete(path, true);
+            }
+
             context.Documents.Remove(doc);
             await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index), "Courses");
+        }
+
+        [HttpGet("download")]
+        public async Task<IActionResult> Download(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var doc = await context.Documents
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (doc == null)
+            {
+                return NotFound();
+            }
+
+            var net = new System.Net.WebClient();
+            var data = net.DownloadData(doc.FilePath);
+            var content = new System.IO.MemoryStream(data);
+            return File(content, "APPLICATION/octet-stream", doc.Name);
         }
     }
 }
