@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lexicon_LMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200604134829_init")]
-    partial class init
+    [Migration("20200618130011_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.1")
+                .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -36,6 +36,31 @@ namespace Lexicon_LMS.Migrations
                     b.ToTable("ActivityTypes");
                 });
 
+            modelBuilder.Entity("Lexicon_LMS.Models.AssignmentComments", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Comments")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DocumentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AssignmentComments");
+                });
+
             modelBuilder.Entity("Lexicon_LMS.Models.Course", b =>
                 {
                     b.Property<int>("Id")
@@ -49,10 +74,18 @@ namespace Lexicon_LMS.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("DifficultyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DifficultyId");
 
                     b.ToTable("Courses");
                 });
@@ -91,6 +124,21 @@ namespace Lexicon_LMS.Migrations
                     b.ToTable("Activities");
                 });
 
+            modelBuilder.Entity("Lexicon_LMS.Models.Difficulty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Level")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Difficulties");
+                });
+
             modelBuilder.Entity("Lexicon_LMS.Models.Document", b =>
                 {
                     b.Property<int>("Id")
@@ -105,6 +153,9 @@ namespace Lexicon_LMS.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModuleId")
@@ -176,7 +227,7 @@ namespace Lexicon_LMS.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CourseId")
+                    b.Property<int?>("CourseId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -185,6 +236,12 @@ namespace Lexicon_LMS.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -369,6 +426,28 @@ namespace Lexicon_LMS.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Lexicon_LMS.Models.AssignmentComments", b =>
+                {
+                    b.HasOne("Lexicon_LMS.Models.Document", "Document")
+                        .WithMany("AssignmentComments")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Lexicon_LMS.Models.User", "User")
+                        .WithMany("AssignmentComments")
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("Lexicon_LMS.Models.Course", b =>
+                {
+                    b.HasOne("Lexicon_LMS.Models.Difficulty", "Difficulties")
+                        .WithMany()
+                        .HasForeignKey("DifficultyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Lexicon_LMS.Models.CourseActivity", b =>
                 {
                     b.HasOne("Lexicon_LMS.Models.ActivityType", "ActivityType")
@@ -416,9 +495,7 @@ namespace Lexicon_LMS.Migrations
                 {
                     b.HasOne("Lexicon_LMS.Models.Course", "Course")
                         .WithMany("Users")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CourseId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

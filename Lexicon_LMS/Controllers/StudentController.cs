@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Lexicon_LMS.Data;
-using Lexicon_LMS.Migrations;
 using Lexicon_LMS.Models;
 using Lexicon_LMS.ViewModels.Student;
 using Microsoft.AspNetCore.Authorization;

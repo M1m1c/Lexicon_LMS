@@ -39,7 +39,7 @@
 
     </dl>
     <button id="addComments" class="btn btn-primary btn-sm mb-3">Add comments</button>
-    <form class="mb-5" id="commentForm" asp-action="addComments"
+    <form style="display:none;" class="mb-5"  id="commentForm" asp-action="AddComments"
               data-ajax="true"
               data-ajax-method="POST"
               data-ajax-mode="after"
@@ -47,18 +47,27 @@
               data-ajax-success="RemoveForm"
               data-ajax-failure="Fail"
           >
-        <textarea>Add comments here</textarea>
+        <input asp-for="Id" type="hidden" value="@Model.Id" />
+        <textarea asp-for="NewComments" rows="4" cols="50">Add comments here</textarea>
         <button type="submit">Save comment</button>
     </form>
 </div>
 <div>
     <h3>Comments for this assignment</h3>
     <hr />
-    <ul id="comments" class="list-group">
-        <li class="list-group-item">
-            <div><span>From</span> <span class="float-right">Date</span></div>
-
-        </li>
+    <ul id="comments" class="list-group mb-5">
+        @foreach (var item in Model.Comments)
+        {
+            <li class="list-group-item">
+                <div>
+                    <span class="font-weight-bold">From @item.User.UserName</span> 
+                    <span class="float-right font-weight-bold">Date @item.Date.ToShortDateString() </span>
+                </div>
+                <div class="mt-3">
+                    @item.Comments
+                </div>
+            </li>
+        }
     </ul>
 </div>
 <div>

@@ -232,12 +232,6 @@ namespace Lexicon_LMS.Controllers
             return RedirectToAction(nameof(Details),"Courses",new { id=(int)courseId });
         }
 
-        public async Task<IActionResult> AddComments()
-        {
-
-
-            return  View();
-        }
 
         private CourseActivityViewModel ToCourseActivityViewModel(CourseActivity act,int? courseId)
         {
