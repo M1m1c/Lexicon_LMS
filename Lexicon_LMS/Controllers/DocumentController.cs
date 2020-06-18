@@ -39,7 +39,7 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> Create(int? holderId, HolderTypeEnum holderType,string userId, IFormFile file, string url)
         {
 
-            if (await DoesTypeWithIdExist(holderType, holderId) == false)
+            if (await DoesHolderTypeWithIdExist(holderType, holderId) == false)
             {
                 return NotFound();
             }
@@ -51,37 +51,9 @@ namespace Lexicon_LMS.Controllers
                 return NotFound();
             }
 
-            var document = new Document()
-            {
-                UserId = user.Id,
-                User = user,
-                Name = file.FileName,
-                UploadDate = DateTime.Now
-            };
+            Document document = InstantiateDocument(holderId, holderType, file, user);
 
-            string path = "";
-
-            switch (holderType)
-            {
-                case HolderTypeEnum.Course:
-                    document.CourseId = holderId;
-                    document.Course = await context.Courses.FindAsync(holderId);
-                    path = GetPath(document.Course, null, null, user.Id);
-                    break;
-                case HolderTypeEnum.Module:
-                    document.ModuleId = holderId;
-                    document.Module = await context.Modules.FindAsync(holderId);
-                    var mCourse = await context.Courses.FindAsync(document.Module.CourseId);
-                    path = GetPath(mCourse, document.Module, null, user.Id);
-                    break;
-                case HolderTypeEnum.Activity:
-                    document.ActivityId = holderId;
-                    document.Activity = await context.Activities.FindAsync(holderId);
-                    var aModule = await context.Modules.FindAsync(document.Activity.ModuleId);
-                    var aCourse = await context.Courses.FindAsync(aModule.CourseId);
-                    path = GetPath(aCourse, aModule, document.Activity, user.Id);
-                    break;
-            }
+            string path = await DeterminePath(holderId, holderType, user);
 
             document.FilePath = $"{path}{file.FileName}";
 
@@ -90,7 +62,7 @@ namespace Lexicon_LMS.Controllers
                 return NotFound();
             }
 
-            if (Directory.Exists(path)==false)
+            if (Directory.Exists(path) == false)
             {
                 Directory.CreateDirectory(path);
             }
@@ -101,11 +73,12 @@ namespace Lexicon_LMS.Controllers
             }
 
             var alreadyExisitngDoc = context.Documents.FirstOrDefault(d => d.FilePath == document.FilePath);
-            if (alreadyExisitngDoc==null)
+
+            if (alreadyExisitngDoc == null)
             {
                 await context.Documents.AddAsync(document);
                 user.Documents.Add(document);
-                
+
             }
             else
             {
@@ -120,14 +93,41 @@ namespace Lexicon_LMS.Controllers
                     throw;
                 }
             }
+
             await context.SaveChangesAsync();
             TempData["AlertMsg"] = "Document Uploaded";
-            return Redirect("https://"+url);
+
+            return Redirect("https://" + url);
         }
 
-      
+        private static Document InstantiateDocument(int? holderId, HolderTypeEnum holderType, IFormFile file, User user)
+        {
+            var document = new Document()
+            {
+                UserId = user.Id,
+                User = user,
+                Name = file.FileName,
+                UploadDate = DateTime.Now
+            };
 
-        private async Task<bool> DoesTypeWithIdExist(HolderTypeEnum holderType, int? holderId)
+
+            switch (holderType)
+            {
+                case HolderTypeEnum.Course:
+                    document.CourseId = holderId;
+                    break;
+                case HolderTypeEnum.Module:
+                    document.ModuleId = holderId;
+                    break;
+                case HolderTypeEnum.Activity:
+                    document.ActivityId = holderId;
+                    break;
+            }
+
+            return document;
+        }
+
+        private async Task<bool> DoesHolderTypeWithIdExist(HolderTypeEnum holderType, int? holderId)
         {
             bool retflag = false;
             switch (holderType)
@@ -152,6 +152,30 @@ namespace Lexicon_LMS.Controllers
                     break;
             }
             return retflag;
+        }
+
+        private async Task<string> DeterminePath(int? holderId, HolderTypeEnum holderType, User user)
+        {
+            Course course = null;
+            Module module = null;
+            CourseActivity activity = null;
+            switch (holderType)
+            {
+                case HolderTypeEnum.Course:
+                    course = await context.Courses.FindAsync(holderId);
+                    break;
+                case HolderTypeEnum.Module:
+                    module = await context.Modules.FindAsync(holderId);
+                    course = await context.Courses.FindAsync(module.CourseId);
+                    break;
+                case HolderTypeEnum.Activity:
+                    activity = await context.Activities.FindAsync(holderId);
+                    module = await context.Modules.FindAsync(activity.ModuleId);
+                    course = await context.Courses.FindAsync(module.CourseId);
+                    break;
+            }
+
+            return GetPath(course, module, activity, user.Id);
         }
 
         private string GetPath(Course course, Module module, CourseActivity activity, string userId)
