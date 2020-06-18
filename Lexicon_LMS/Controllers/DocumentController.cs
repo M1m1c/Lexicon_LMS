@@ -121,46 +121,11 @@ namespace Lexicon_LMS.Controllers
                 }
             }
             await context.SaveChangesAsync();
-            return Redirect(url);
+            TempData["AlertMsg"] = "Document Uploaded";
+            return Redirect("https://"+url);
         }
 
-        private async Task<Document> InstantiateDocument(int? holderId, HolderTypeEnum holderType, IFormFile file, User user)
-        {
-            var document = new Document()
-            {
-                UserId = user.Id,
-                User = user,
-                Name = file.FileName,
-                UploadDate = DateTime.Now
-            };
-
-            string path = "";
-            
-            switch (holderType)
-            {
-                case HolderTypeEnum.Course:
-                    document.CourseId = holderId;
-                    document.Course = await context.Courses.FindAsync(holderId);
-                    path = GetPath(document.Course, null, null, user.Id);
-                    break;
-                case HolderTypeEnum.Module:
-                    document.ModuleId = holderId;
-                    document.Module = await context.Modules.FindAsync(holderId);
-                    var mCourse = await context.Courses.FindAsync(document.Module.CourseId);
-                    path = GetPath(mCourse, document.Module, null, user.Id);
-                    break;
-                case HolderTypeEnum.Activity:
-                    document.ActivityId = holderId;
-                    document.Activity = await context.Activities.FindAsync(holderId);
-                    var aModule = await context.Modules.FindAsync(document.Activity.ModuleId);
-                    var aCourse = await context.Courses.FindAsync(aModule.CourseId);
-                    path = GetPath(aCourse, aModule, document.Activity, user.Id);
-                    break;
-            }
-            document.FilePath = $"{path}{file.FileName}";
-
-            return document;
-        }
+      
 
         private async Task<bool> DoesTypeWithIdExist(HolderTypeEnum holderType, int? holderId)
         {
