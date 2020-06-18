@@ -1,0 +1,24 @@
+﻿
+
+@if (TempData["AlertMsg"] != null)
+{
+    <h3 class="text-success">@TempData["AlertMsg"]</h3>
+}
+<form class="mb-5 mt-5 container"
+      asp-controller="Document"
+      asp-action="Create"
+      asp-route-holderId="@ViewData["modelId"]"
+      asp-route-userId="@ViewData["userId"]"
+      asp-route-holderType="@ViewData["type"]"
+      asp-route-courseId="@ViewData["courseId"]"
+      asp-route-url="@Context.Request.Host@Context.Request.Path"
+      method="post"
+      enctype="multipart/form-data">
+
+    <div class="row mb-2">
+        <input class="btn btn-info" type="file" name="file" />
+    </div>
+    <div class="row">
+        <button class="btn btn-info" type="submit">Upload File</button>
+    </div>
+</form>
