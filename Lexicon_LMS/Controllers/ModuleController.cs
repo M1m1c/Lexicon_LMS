@@ -74,8 +74,15 @@ namespace Lexicon_LMS.Controllers
             {
                 return NotFound();
             }
+            var course = context.Courses.Include(c => c.Users).FirstOrDefault(c => c.Id == Courseid);
+           
+            var model = new ModuleViewModel { CourseId = (int)Courseid };
 
-            return View(new ModuleViewModel { CourseId = (int)Courseid });
+            model.StartDate = course.StartDate;
+            model.EndDate = course.EndDate.AddDays(-1);
+                
+
+            return View(model);
         }
 
         // POST: Module/Create
@@ -210,6 +217,16 @@ namespace Lexicon_LMS.Controllers
         }
 
 
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyEndDate(DateTime endDate, int courseId)
+        {
+            var course = unitOfWork.CourseRepository.GetCourseById(courseId);
 
+            if ((endDate - course.EndDate).TotalSeconds > 0)
+            {
+                return Json($"Module End date can't be after course End date");
+            }
+            return Json(true);
+        }
     }
 }

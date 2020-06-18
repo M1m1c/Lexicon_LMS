@@ -5,9 +5,13 @@
 @{
     ViewData["Title"] = "Details";
     var activitytype = 3;
+
+
 }
 
-<h1> @Html.DisplayFor(model => model.ActivityName)</h1>
+    <h1> Course: @Model.CourseName</h1>
+    <h2> Module: @Model.ModuleName</h2>
+<h3> @Html.DisplayFor(model => model.ActivityName)</h3>
 
 <div class="container">
     <div class="row">
@@ -92,33 +96,49 @@
         <tbody>
             @foreach (var doc in Model.StudentDocuments)
             {
-            <tr>
-                <td>
-                    <a asp-controller="Document" asp-action="Details" asp-route-id="@doc.Id">
-                        @Html.DisplayFor(modelItem => doc.Name)
-                    </a>
-                </td>
-                <td>
-                    @Html.DisplayFor(model => doc.UpploaderName)
-                </td>
-              
-            </tr>
+                <tr>
+                    <td>
+                        <a asp-controller="Document" asp-action="Details" asp-route-id="@doc.Id">
+                            @Html.DisplayFor(modelItem => doc.Name)
+                        </a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => doc.UpploaderName)
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
 }
 
+@if (User.IsInRole("Teacher") || (User.IsInRole("Student") && Model.ActivityTypeName == "Assignment" && Model.MyStudentDocument == null))
+{
+    <form class="mb-5 mt-5 container"
+          asp-controller="Document"
+          asp-action="Create"
+          asp-route-holderId="@Model.Id"
+          asp-route-userId="@UserManager.GetUserId(User)"
+          asp-route-holderType="@activitytype"
+          asp-route-url="@Context.Request.Host@Context.Request.Path"
+          method="post"
+          enctype="multipart/form-data">
 
-<div>
+        <div class="row mb-2">
+            <input class="btn btn-info" type="file" name="file" />
+        </div>
+        <div class="row">
+            <button class="btn btn-info" type="submit">Upload File</button>
+        </div>
+    </form>
+}
+
+
+<div class="mb-5">
     @if (User.IsInRole("Teacher"))
     {
         <a class="btn btn-warning" asp-controller="Activity" asp-action="Edit" asp-route-Id="@Model.Id" asp-route-courseId="@Model.CourseId">Edit Activity</a>
-        <a class="btn btn-primary mr-3" asp-controller="Document" asp-action="Create" asp-route-holderId="@Model.Id" asp-route-userId="@UserManager.GetUserId(User)" asp-route-holderType="@activitytype">Add Activity File</a>
     }
 
-    @if (User.IsInRole("Student") && Model.ActivityTypeName == "Assignment" && Model.MyStudentDocument == null)
-    {
-        <a class="btn btn-success text-white" asp-controller="Document" asp-action="Create" asp-route-holderId="@Model.Id" asp-route-userId="@UserManager.GetUserId(User)" asp-route-holderType="@activitytype">Hand in Assignment</a>
-    }
+
     <a class="btn btn-primary" asp-controller="Courses" asp-action="Details" asp-route-Id="@Model.CourseId">Back to course</a>
 </div>
