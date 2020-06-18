@@ -9,8 +9,8 @@
 
 }
 
-    <h1> Course: @Model.CourseName</h1>
-    <h2> Module: @Model.ModuleName</h2>
+<h1> Course: @Model.CourseName</h1>
+<h2> Module: @Model.ModuleName</h2>
 <h3> @Html.DisplayFor(model => model.ActivityName)</h3>
 
 <div class="container">
@@ -113,23 +113,11 @@
 
 @if (User.IsInRole("Teacher") || (User.IsInRole("Student") && Model.ActivityTypeName == "Assignment" && Model.MyStudentDocument == null))
 {
-    <form class="mb-5 mt-5 container"
-          asp-controller="Document"
-          asp-action="Create"
-          asp-route-holderId="@Model.Id"
-          asp-route-userId="@UserManager.GetUserId(User)"
-          asp-route-holderType="@activitytype"
-          asp-route-url="@Context.Request.Host@Context.Request.Path"
-          method="post"
-          enctype="multipart/form-data">
-
-        <div class="row mb-2">
-            <input class="btn btn-info" type="file" name="file" />
-        </div>
-        <div class="row">
-            <button class="btn btn-info" type="submit">Upload File</button>
-        </div>
-    </form>
+    <partial name="~/Views/Document/DocumentUploadPartial.cshtml"
+             view-data='@new ViewDataDictionary(ViewData){
+    { "type", activitytype},
+    {"userId",UserManager.GetUserId(User) },
+    {"modelId",Model.Id }}' />
 }
 
 
