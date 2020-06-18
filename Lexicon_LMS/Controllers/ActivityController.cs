@@ -221,6 +221,13 @@ namespace Lexicon_LMS.Controllers
             return RedirectToAction(nameof(Details),"Courses",new { id=(int)courseId });
         }
 
+        public async Task<IActionResult> AddComments()
+        {
+
+
+            return  View();
+        }
+
         private CourseActivityViewModel ToCourseActivityViewModel(CourseActivity act,int? courseId)
         {
             CourseActivityViewModel ret = mapper.Map<CourseActivityViewModel>(act);
@@ -230,6 +237,7 @@ namespace Lexicon_LMS.Controllers
             ret.ActivityTypes = GetActivityTypesForDropDown();
             ret.CourseId = (int)courseId;
             ret.ModuleId = (int)act.ModuleId;
+            ret.ActivityId = act.Id;
             return ret;
         }
     }

@@ -28,5 +28,6 @@ namespace Lexicon_LMS.Models.ViewModels
         public ICollection<DocumentViewModel> TeacherDocuments { get; set; }
         public ICollection<DocumentViewModel> StudentDocuments { get; set; }
         public DocumentViewModel MyStudentDocument { get; set; }
+        public int ActivityId { get; set; }
     }
 }

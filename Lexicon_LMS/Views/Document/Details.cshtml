@@ -36,13 +36,36 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.UpploaderName)
         </dd>
+
     </dl>
+    <button id="addComments" class="btn btn-primary btn-sm mb-3">Add comments</button>
+    <form class="mb-5" id="commentForm" asp-action="addComments"
+              data-ajax="true"
+              data-ajax-method="POST"
+              data-ajax-mode="after"
+              data-ajax-update="#comments"
+              data-ajax-success="RemoveForm"
+              data-ajax-failure="Fail"
+          >
+        <textarea>Add comments here</textarea>
+        <button type="submit">Save comment</button>
+    </form>
+</div>
+<div>
+    <h3>Comments for this assignment</h3>
+    <hr />
+    <ul id="comments" class="list-group">
+        <li class="list-group-item">
+            <div><span>From</span> <span class="float-right">Date</span></div>
+
+        </li>
+    </ul>
 </div>
 <div>
     @if (UserManager.GetUserId(User) == Model.UserId)
     {
         <a asp-controller="Document" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Delete</a>
-        
+
     }
 
     <a class="btn btn-primary" href="##" onclick="history.go(-1); return false;">Back</a>
