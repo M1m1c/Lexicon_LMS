@@ -39,14 +39,18 @@ namespace Lexicon_LMS.Controllers
             {
                 return NotFound();
             }
-            var activity = await context.Activities.FindAsync(id);
 
-           
+            var activity = await context.Activities.FindAsync(id);
+            var module = await context.Modules.FindAsync(activity.ModuleId);
+            var course = await context.Courses.FindAsync(module.CourseId);
+
             if (activity == null)
             {
                 return NotFound();
             }
             var model = ToCourseActivityViewModel(activity, courseId);
+            model.ModuleName = module.ModuleName;
+            model.CourseName = course.CourseName;
 
             var documents =context.Documents.Where(d => d.ActivityId == activity.Id);
 
@@ -92,8 +96,7 @@ namespace Lexicon_LMS.Controllers
         {
            
 
-            var module = await context.Modules.FindAsync(moduleId);
-            
+            var module = await context.Modules.FindAsync(moduleId); 
             var course = await context.Courses.FindAsync(module.CourseId);
             if (module == null) 
             {
