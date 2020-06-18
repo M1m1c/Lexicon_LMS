@@ -93,7 +93,8 @@ namespace Lexicon_LMS.Controllers
            
 
             var module = await context.Modules.FindAsync(moduleId);
- //           var course = context.Courses.Include(c => c.Modules).FirstOrDefault(c => c.Id == moduleId);
+            
+            var course = await context.Courses.FindAsync(module.CourseId);
             if (module == null) 
             {
                 return NotFound();
@@ -102,7 +103,7 @@ namespace Lexicon_LMS.Controllers
             var courseActivity = new CourseActivityViewModel
             {
                 ModuleId = (int)moduleId,
- //               CourseName = course.CourseName,
+                CourseName = course.CourseName,
                 ModuleName = module.ModuleName,
                 StartDate = module.StartDate,
                 EndDate = module.EndDate,
