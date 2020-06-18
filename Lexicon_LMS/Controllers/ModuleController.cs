@@ -75,7 +75,7 @@ namespace Lexicon_LMS.Controllers
                 return NotFound();
             }
             var course = context.Courses.Include(c => c.Users).FirstOrDefault(c => c.Id == Courseid);
-           // var course = context.Courses.Where(c => c.Id == Courseid);
+           
             var model = new ModuleViewModel { CourseId = (int)Courseid };
 
             model.StartDate = course.StartDate;

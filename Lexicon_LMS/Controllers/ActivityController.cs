@@ -90,15 +90,22 @@ namespace Lexicon_LMS.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Create(int? moduleId)
         {
+           
+
             var module = await context.Modules.FindAsync(moduleId);
+ //           var course = context.Courses.Include(c => c.Modules).FirstOrDefault(c => c.Id == moduleId);
             if (module == null) 
             {
                 return NotFound();
             }
-
+           
             var courseActivity = new CourseActivityViewModel
             {
                 ModuleId = (int)moduleId,
+ //               CourseName = course.CourseName,
+                ModuleName = module.ModuleName,
+                StartDate = module.StartDate,
+                EndDate = module.EndDate,
                 ActivityTypes = GetActivityTypesForDropDown(),
                 CourseId=module.CourseId
             };
