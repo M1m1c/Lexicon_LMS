@@ -249,9 +249,16 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var doc = await context.Documents.FindAsync(id);
+            if (System.IO.File.Exists(doc.FilePath))
+            {
+                System.IO.File.Delete(doc.FilePath);
+            }
+
             context.Documents.Remove(doc);
             await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index), "Courses");
         }
+
+      
     }
 }
