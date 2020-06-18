@@ -21,5 +21,7 @@ namespace Lexicon_LMS.Models
         public Course Course { get; set; }
         public Module Module { get; set; }
         public CourseActivity Activity { get; set; }
+
+        public string FilePath { get; set; }
     }
 }
