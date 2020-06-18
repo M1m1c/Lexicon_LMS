@@ -33,10 +33,9 @@ namespace Lexicon_LMS.Controllers
         }
 
 
-        // GET: Courses/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int? holderId, HolderTypeEnum holderType,string userId, IFormFile file, string url)
+        public async Task<IActionResult> Create(int? holderId, HolderTypeEnum holderType,string userId, IFormFile file, string url, int courseId)
         {
 
             if (await DoesHolderTypeWithIdExist(holderType, holderId) == false)
@@ -94,10 +93,16 @@ namespace Lexicon_LMS.Controllers
                 }
             }
 
+            string courseRoute = "";
+            if (holderType==HolderTypeEnum.Activity)
+            {
+                courseRoute = $"?courseId={courseId}";
+            }
+
             await context.SaveChangesAsync();
             TempData["AlertMsg"] = "Document Uploaded";
 
-            return Redirect("https://" + url);
+            return Redirect($"https://{url}{courseRoute}");
         }
 
         private static Document InstantiateDocument(int? holderId, HolderTypeEnum holderType, IFormFile file, User user)
@@ -254,11 +259,18 @@ namespace Lexicon_LMS.Controllers
                 System.IO.File.Delete(doc.FilePath);
             }
 
+            var path = doc.FilePath.Replace(doc.Name,"");
+
+            if (Directory.GetFiles(path).Length == 0 && Directory.GetDirectories(path).Length == 0)
+            {
+                Directory.Delete(path, true);
+            }
+
             context.Documents.Remove(doc);
             await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index), "Courses");
         }
 
-      
+        
     }
 }
