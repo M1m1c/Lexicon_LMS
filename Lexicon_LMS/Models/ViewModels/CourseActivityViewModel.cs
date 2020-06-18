@@ -10,6 +10,8 @@ namespace Lexicon_LMS.Models.ViewModels
     public class CourseActivityViewModel
     {
         public int Id { get; set; }
+        public string CourseName { get; set; }
+        public string ModuleName { get; set; }
         public string ActivityName { get; set; }
         public string ActivityDescription { get; set; }
 
