@@ -258,5 +258,16 @@ namespace Lexicon_LMS.Controllers
             return Json(true);
         }
 
+        [AcceptVerbs("GET", "POST")]
+        public async Task<IActionResult> VerifyActivityEndDate(DateTime endDate, int moduleId)
+        {
+
+            var module = await context.Modules.FindAsync(moduleId);
+            if (endDate > module.EndDate)
+            {
+                return Json($"Activity end date can't be after Module end date");
+            }
+            return Json(true);
+        }
     }
 }
