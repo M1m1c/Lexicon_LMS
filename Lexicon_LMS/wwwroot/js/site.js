@@ -4,5 +4,12 @@
 // Write your JavaScript code.
 
 $(document).ready(function () {
-    $('#example').DataTable();
+    $('#example').dataTable({
+        "order": [],
+        "columnDefs": [{
+            "targets": 'no-sort',
+            "orderable": false,
+            "searchable": false,
+        }]
+    });
 });

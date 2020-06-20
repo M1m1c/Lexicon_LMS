@@ -7,19 +7,14 @@
 <h1>Paticipants in @Model.FirstOrDefault().CourseName</h1>
 
 
-<table class="table">
+<table id="example" class="table table-striped table-bordered" style="width:100%">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th></th>
+            <th>  @Html.DisplayNameFor(model => model.FirstName) </th>
+            <th>   @Html.DisplayNameFor(model => model.LastName)</th>
+            <th>   @Html.DisplayNameFor(model => model.Email)  </th>
+            @if (User.IsInRole("Teacher")) { <th class="no-sort">  Edit | Details | Delete  </th>}
+                
         </tr>
     </thead>
     <tbody>
@@ -43,8 +38,15 @@
                         <a asp-controller="Teacher" asp-action="DeleteUser" asp-route-id="@item.Id">Delete</a>
                     </td>
                 }
-
             </tr>
         }
     </tbody>
 </table>
+
+@section scripts{
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="  https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+}
