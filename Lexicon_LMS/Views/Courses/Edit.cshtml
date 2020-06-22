@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit";
 }
 
-    <h1>Edit course</h1>
+<h1>Edit course</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -36,9 +36,9 @@
         </form>
     </div>
 </div>
-
+<hr />
 <div>
-    <a class="btn btn-warning" asp-action="Index">Back to List</a>
+    <a asp-controller="Courses" asp-action="Details" asp-route-Id="@Model.Id"><input type="submit" value="Back" class="btn btn-warning" /></a>
 </div>
 
 @section Scripts {
