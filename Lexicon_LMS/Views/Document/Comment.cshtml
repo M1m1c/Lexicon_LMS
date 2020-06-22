@@ -1,0 +1,11 @@
+﻿@model AssignmentComments
+
+<li class="list-group-item">
+    <div>
+        <span class="font-weight-bold">From @Model.User.UserName</span>
+        <span class="float-right font-weight-bold">Date @Model.Date.ToShortDateString() </span>
+    </div>
+    <div class="mt-3">
+        @Model.Comments
+    </div>
+</li>

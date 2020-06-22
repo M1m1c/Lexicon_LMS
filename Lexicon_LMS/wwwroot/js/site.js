@@ -7,3 +7,12 @@ $(document).ready(function () {
         $("#commentForm").toggle('slow');
     });
 });
+
+function RemoveForm() {
+    $("#commentForm").hide();
+};
+
+function Fail(result) {
+    $("#commentForm").hide();
+}
+
