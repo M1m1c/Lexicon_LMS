@@ -80,8 +80,6 @@ namespace Lexicon_LMS.Controllers
 
             model.StartDate = course.StartDate;
             model.EndDate = course.EndDate.AddDays(-1);
-                
-
             return View(model);
         }
 
