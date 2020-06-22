@@ -203,20 +203,35 @@ namespace Lexicon_LMS.Controllers
         }
 
         [AcceptVerbs("GET", "POST")]
-        public IActionResult VerifyStartDate(DateTime startDate, int courseId)
+        public IActionResult VerifyStartDate(DateTime startDate, int courseId, DateTime endDate)
         {
             var course = unitOfWork.CourseRepository.GetCourseById(courseId);
-       
+
             if ((startDate - course.StartDate).TotalSeconds < 0)
+            { 
+                return Json($"Module Start date can't be before course start date");
+            }
+
+            var inside = VerifyNotInsideOtherModule(startDate.Date, courseId);
+
+            if (!string.IsNullOrEmpty(inside)) 
             {
-                return Json($"Module date can't be before course start date");
-            }         
+                return Json(inside);
+            }
+
+            var overlapping = VerifyNotOverlapping(startDate.Date, endDate.Date, courseId);
+
+            if (!string.IsNullOrEmpty(overlapping))
+            {
+                return Json(overlapping);
+            }
+
             return Json(true);
         }
 
 
         [AcceptVerbs("GET", "POST")]
-        public IActionResult VerifyEndDate(DateTime endDate, int courseId)
+        public IActionResult VerifyEndDate(DateTime endDate, int courseId,DateTime startDate)
         {
             var course = unitOfWork.CourseRepository.GetCourseById(courseId);
 
@@ -224,7 +239,54 @@ namespace Lexicon_LMS.Controllers
             {
                 return Json($"Module End date can't be after course End date");
             }
+
+            var inside = VerifyNotInsideOtherModule(endDate.Date, courseId);
+
+            if (!string.IsNullOrEmpty(inside))
+            {
+                return Json(inside);
+            }
+
+            var overlapping = VerifyNotOverlapping(startDate.Date, endDate.Date, courseId);
+
+            if (!string.IsNullOrEmpty(overlapping))
+            {
+                return Json(overlapping);
+            }
+
             return Json(true);
         }
+
+        
+        private string VerifyNotInsideOtherModule(DateTime Date , int courseId)
+        {
+            foreach (var module in context.Modules.Where(m => m.CourseId == courseId))
+            {
+                var modSDate = module.StartDate.Date;
+                var modEDate = module.EndDate.Date;
+
+                if ((Date >= modSDate && Date <= modEDate))
+                {
+                    return $"Module can't begin or end inside another module";
+                }
+            }
+            return "";
+        }
+
+        private string VerifyNotOverlapping(DateTime startDate,DateTime endDate, int courseId)
+        {
+            foreach (var module in context.Modules.Where(m => m.CourseId == courseId))
+            {
+                var modSDate = module.StartDate.Date;
+                var modEDate = module.EndDate.Date;
+
+                if ((startDate <= modSDate && endDate >= modEDate))
+                {
+                    return $"Module can't overlapp with another module";
+                }
+            }
+            return "";
+        }
+
     }
 }
