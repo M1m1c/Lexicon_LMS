@@ -80,6 +80,7 @@ namespace Lexicon_LMS.Controllers
 
             model.StartDate = course.StartDate;
             model.EndDate = course.EndDate.AddDays(-1);
+            model.UnavilableDates = mapper.Map<ICollection<ModuleViewModel>>(context.Modules.Where(m => m.CourseId == Courseid));
             return View(model);
         }
 

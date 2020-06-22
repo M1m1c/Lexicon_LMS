@@ -37,6 +37,8 @@ namespace Lexicon_LMS.Models.ViewModels
         public Course Course { get; set; }
         public ICollection<DocumentViewModel> Documents { get; set; }
         public IEnumerable<CourseActivityViewModel> Activities { get; set; }
+
+        public ICollection<ModuleViewModel> UnavilableDates  { get; set; }
     }
 
   
