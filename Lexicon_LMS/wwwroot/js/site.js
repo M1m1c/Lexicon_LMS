@@ -13,5 +13,20 @@ $(document).ready(function () {
             "searchable": false,
         }]
     });
+
 });
+
+$(document).ready(function () {
+    $("#addComments").click(function () {
+        $("#commentForm").toggle('slow');
+    });
+});
+
+function RemoveForm() {
+    $("#commentForm").hide();
+};
+
+function Fail(result) {
+    $("#commentForm").hide();
+}
 

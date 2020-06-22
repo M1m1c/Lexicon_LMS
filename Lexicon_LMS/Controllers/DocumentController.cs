@@ -17,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lexicon_LMS.Controllers
 {
+    [Authorize]
     public class DocumentController : Controller
     {
         private readonly ApplicationDbContext context;
@@ -214,6 +215,7 @@ namespace Lexicon_LMS.Controllers
       
 
         // GET: Activity/Details/5
+      
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -255,21 +257,23 @@ namespace Lexicon_LMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> AddComments(DocumentViewModel model)
         {
-            var userId = userManager.GetUserId(User);
+            var user = await userManager.GetUserAsync(User);
 
-            var newComments = new AssignmentComments { 
+            var newComment = new AssignmentComments { 
                 Comments = model.NewComments,
-                UserId = userId,
+                UserId = user.Id,
                 DocumentId = model.Id,
-                Date = DateTime.Now.Date
+                Date = DateTime.Now.Date,
+                User = user
             };
             
-            context.AssignmentComments.Add(newComments);
+            context.AssignmentComments.Add(newComment);
             await context.SaveChangesAsync();           
 
-            return PartialView("NewComment", model);
+            return PartialView("Comment", newComment);
         }
 
         // POST: Activity/Delete/5
