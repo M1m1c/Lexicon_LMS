@@ -3,6 +3,7 @@
 
 // Write your JavaScript code.
 
+
 $(document).ready(function () {
     $('#example').dataTable({
         "order": [],
@@ -13,3 +14,4 @@ $(document).ready(function () {
         }]
     });
 });
+

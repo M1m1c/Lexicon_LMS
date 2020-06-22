@@ -21,6 +21,9 @@ namespace Lexicon_LMS.Models.ViewModels
         public User User { get; set; }
         public string UpploaderName { get; set; }
 
+        public string NewComments { get; set; }
+
+        public ICollection<AssignmentComments> Comments { get; set; }
     }
 
   

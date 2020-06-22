@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Lexicon_LMS.Migrations
 {
-    public partial class EndDateAdded : Migration
+    public partial class addDateToComments : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<DateTime>(
-                name: "EndDate",
-                table: "Courses",
+                name: "Date",
+                table: "AssignmentComments",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
         }
@@ -17,8 +17,8 @@ namespace Lexicon_LMS.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "EndDate",
-                table: "Courses");
+                name: "Date",
+                table: "AssignmentComments");
         }
     }
 }

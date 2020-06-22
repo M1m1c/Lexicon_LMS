@@ -21,5 +21,9 @@ namespace Lexicon_LMS.Data
         public DbSet<Document> Documents { get; set; }
         public DbSet<ActivityType> ActivityTypes { get; set; }
         public DbSet<Difficulty> Difficulties { get; set; }
+        public DbSet<AssignmentComments> AssignmentComments { get; set; }
+
+
+
     }
 }

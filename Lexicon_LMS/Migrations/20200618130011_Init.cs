@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Lexicon_LMS.Migrations
 {
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -35,18 +35,16 @@ namespace Lexicon_LMS.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Courses",
+                name: "Difficulties",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CourseName = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    StartDate = table.Column<DateTime>(nullable: false)
+                    Level = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Courses", x => x.Id);
+                    table.PrimaryKey("PK_Difficulties", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -71,6 +69,29 @@ namespace Lexicon_LMS.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Courses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CourseName = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    DifficultyId = table.Column<int>(nullable: false),
+                    StartDate = table.Column<DateTime>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Courses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Courses_Difficulties_DifficultyId",
+                        column: x => x.DifficultyId,
+                        principalTable: "Difficulties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
                 {
@@ -90,7 +111,9 @@ namespace Lexicon_LMS.Migrations
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     Age = table.Column<int>(nullable: false),
-                    CourseId = table.Column<int>(nullable: false)
+                    FirstName = table.Column<string>(nullable: true),
+                    LastName = table.Column<string>(nullable: true),
+                    CourseId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -100,7 +123,7 @@ namespace Lexicon_LMS.Migrations
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -253,7 +276,8 @@ namespace Lexicon_LMS.Migrations
                     UserId = table.Column<string>(nullable: true),
                     CourseId = table.Column<int>(nullable: true),
                     ModuleId = table.Column<int>(nullable: true),
-                    ActivityId = table.Column<int>(nullable: true)
+                    ActivityId = table.Column<int>(nullable: true),
+                    FilePath = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -278,6 +302,33 @@ namespace Lexicon_LMS.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Documents_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AssignmentComments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Comments = table.Column<string>(nullable: true),
+                    UserId = table.Column<string>(nullable: true),
+                    DocumentId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AssignmentComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AssignmentComments_Documents_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "Documents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AssignmentComments_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -339,6 +390,21 @@ namespace Lexicon_LMS.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AssignmentComments_DocumentId",
+                table: "AssignmentComments",
+                column: "DocumentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssignmentComments_UserId",
+                table: "AssignmentComments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Courses_DifficultyId",
+                table: "Courses",
+                column: "DifficultyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Documents_ActivityId",
                 table: "Documents",
                 column: "ActivityId");
@@ -382,10 +448,13 @@ namespace Lexicon_LMS.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Documents");
+                name: "AssignmentComments");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Documents");
 
             migrationBuilder.DropTable(
                 name: "Activities");
@@ -401,6 +470,9 @@ namespace Lexicon_LMS.Migrations
 
             migrationBuilder.DropTable(
                 name: "Courses");
+
+            migrationBuilder.DropTable(
+                name: "Difficulties");
         }
     }
 }

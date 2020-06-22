@@ -7,9 +7,11 @@ using AutoMapper;
 using Lexicon_LMS.Data;
 using Lexicon_LMS.Models;
 using Lexicon_LMS.Models.ViewModels;
+using Lexicon_LMS.ViewModels.Document;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,12 +22,14 @@ namespace Lexicon_LMS.Controllers
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
         private readonly IWebHostEnvironment hostingEnvironment;
-        public DocumentController(ApplicationDbContext context, IMapper mapper, IWebHostEnvironment hostingEnvironment)
+        private readonly UserManager<User> userManager;
+
+        public DocumentController(ApplicationDbContext context, IMapper mapper, IWebHostEnvironment hostingEnvironment, UserManager<User> userManager)
         {
             this.context = context;
             this.mapper = mapper;
             this.hostingEnvironment = hostingEnvironment;
-
+            this.userManager = userManager;
         }
         public IActionResult Index()
         {
@@ -226,6 +230,7 @@ namespace Lexicon_LMS.Controllers
             var model = mapper.Map<DocumentViewModel>(doc);
             var user = await context.Users.FindAsync(doc.UserId);
             model.UpploaderName = user.Email;
+            model.Comments = await context.AssignmentComments.Include(c => c.User).Where(c => c.DocumentId == id).ToListAsync();
             return View(model);
         }
 
@@ -246,6 +251,25 @@ namespace Lexicon_LMS.Controllers
             var user = await context.Users.FindAsync(doc.UserId);
             model.UpploaderName = user.Email;
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddComments(DocumentViewModel model)
+        {
+            var userId = userManager.GetUserId(User);
+
+            var newComments = new AssignmentComments { 
+                Comments = model.NewComments,
+                UserId = userId,
+                DocumentId = model.Id,
+                Date = DateTime.Now.Date
+            };
+            
+            context.AssignmentComments.Add(newComments);
+            await context.SaveChangesAsync();           
+
+            return PartialView("NewComment", model);
         }
 
         // POST: Activity/Delete/5
