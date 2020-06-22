@@ -35,15 +35,15 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> Index()
         {
             var model = _context.Courses
-                                .Include(c => c.Difficulties)
-                                .Select(c => new CourseIndexViewModel
-                                {
-                                    Id = c.Id,
-                                    CourseName = c.CourseName,
-                                    Description = c.Difficulties.Level,
-                                    StartDate = c.StartDate,
-                                    EndDate = c.EndDate
-                                });
+                    .Include(c => c.Difficulties)
+                    .Select(c => new CourseIndexViewModel
+                    {
+                        Id = c.Id,
+                        CourseName = c.CourseName,
+                        Description = c.Difficulties.Level,
+                        StartDate = c.StartDate,
+                        EndDate = c.EndDate
+                    });
 
             return View(await model.ToListAsync());
         }
@@ -158,7 +158,7 @@ namespace Lexicon_LMS.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Details), new { id });
+                return RedirectToAction(nameof(Index), new { id });
             }
             return View(course);
         }

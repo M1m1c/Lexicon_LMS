@@ -14,6 +14,7 @@ namespace Lexicon_LMS
     {
         public MapperProfile()
         {
+            CreateMap<Course, CourseIndexViewModel>();
             CreateMap<CourseCreateViewModel, Course>();
             CreateMap<Course, CourseDetailsViewModel>();
             CreateMap<User, UserViewModel>().ForMember(
