@@ -33,7 +33,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Activity/Details/5
-        public async Task<IActionResult> Details(int? id,int? courseId)
+        public async Task<IActionResult> Details(int? id, int? courseId)
         {
             if (id == null)
             {
@@ -52,9 +52,9 @@ namespace Lexicon_LMS.Controllers
             model.ModuleName = module.ModuleName;
             model.CourseName = course.CourseName;
 
-            var documents =context.Documents.Where(d => d.ActivityId == activity.Id);
+            var documents = context.Documents.Where(d => d.ActivityId == activity.Id);
 
-            if (documents!=null)
+            if (documents != null)
             {
                 foreach (var doc in documents)
                 {
@@ -63,7 +63,8 @@ namespace Lexicon_LMS.Controllers
                         if (await userManager.IsInRoleAsync(user, "Teacher") && doc.UserId == user.Id)
                         {
                             model.TeacherDocuments.Add(mapper.Map<DocumentViewModel>(doc));
-                        }else if (User.IsInRole("Teacher")&&await userManager.IsInRoleAsync(user, "Student") && doc.UserId == user.Id)
+                        }
+                        else if (User.IsInRole("Teacher") && await userManager.IsInRoleAsync(user, "Student") && doc.UserId == user.Id)
                         {
                             var temp = mapper.Map<DocumentViewModel>(doc);
                             temp.UpploaderName = user.Email;
@@ -73,20 +74,20 @@ namespace Lexicon_LMS.Controllers
                 }
             }
 
-            var tempdoc= documents.FirstOrDefault(d => d.UserId == userManager.GetUserId(User));
+            var tempdoc = documents.FirstOrDefault(d => d.UserId == userManager.GetUserId(User));
 
             if (User.IsInRole("Student") && tempdoc != null)
             {
                 model.MyStudentDocument = mapper.Map<DocumentViewModel>(tempdoc);
             }
-            
-           // model.Documents = mapper.Map<ICollection<DocumentViewModel>>(context.Documents.Where(d => d.ActivityId == id));
+
+            // model.Documents = mapper.Map<ICollection<DocumentViewModel>>(context.Documents.Where(d => d.ActivityId == id));
 
             return View(model);
         }
 
         private List<SelectListItem> GetActivityTypesForDropDown()
-        {          
+        {
             return context.ActivityTypes.ToList().Select(r => new SelectListItem { Value = r.Id.ToString(), Text = r.Name }).ToList(); ;
         }
 
@@ -94,15 +95,15 @@ namespace Lexicon_LMS.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Create(int? moduleId)
         {
-           
 
-            var module = await context.Modules.FindAsync(moduleId); 
+
+            var module = await context.Modules.FindAsync(moduleId);
             var course = await context.Courses.FindAsync(module.CourseId);
-            if (module == null) 
+            if (module == null)
             {
                 return NotFound();
             }
-           
+
             var courseActivity = new CourseActivityViewModel
             {
                 ModuleId = (int)moduleId,
@@ -111,7 +112,7 @@ namespace Lexicon_LMS.Controllers
                 StartDate = module.StartDate,
                 EndDate = module.EndDate,
                 ActivityTypes = GetActivityTypesForDropDown(),
-                CourseId=module.CourseId
+                CourseId = module.CourseId
             };
             return View(courseActivity);
         }
@@ -120,7 +121,7 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Teacher")]
-        public async Task<IActionResult> Create([Bind("ActivityName,ActivityDescription,StartDate,EndDate,ActivityTypeId,ModuleId")]CourseActivityViewModel courseActivity)
+        public async Task<IActionResult> Create([Bind("ActivityName,ActivityDescription,StartDate,EndDate,ActivityTypeId,ModuleId")] CourseActivityViewModel courseActivity)
         {
             if (ModelState.IsValid)
             {
@@ -129,7 +130,7 @@ namespace Lexicon_LMS.Controllers
                 activity.ActivityTypeId = int.Parse(courseActivity.ActivityTypeId);
 
                 if (module != null)
-                {                 
+                {
                     try
                     {
                         context.Activities.Add(activity);
@@ -143,7 +144,7 @@ namespace Lexicon_LMS.Controllers
                         return View(courseActivity);
                     }
                 }
-          
+
             }
             return View(courseActivity);
         }
@@ -175,7 +176,7 @@ namespace Lexicon_LMS.Controllers
             {
                 return NotFound();
             }
-           
+
             if (ModelState.IsValid)
             {
                 var activity = mapper.Map<CourseActivity>(model);
@@ -187,7 +188,7 @@ namespace Lexicon_LMS.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
 
-                    if (!context.Activities.Any(a=>a.Id ==id))
+                    if (!context.Activities.Any(a => a.Id == id))
                     {
                         return NotFound();
                     }
@@ -216,7 +217,7 @@ namespace Lexicon_LMS.Controllers
             {
                 return NotFound();
             }
-            
+
             return View(ToCourseActivityViewModel(activity, courseId));
         }
 
@@ -229,11 +230,12 @@ namespace Lexicon_LMS.Controllers
             var activity = await context.Activities.FindAsync(id);
             context.Activities.Remove(activity);
             await context.SaveChangesAsync();
-            return RedirectToAction(nameof(Details),"Courses",new { id=(int)courseId });
+            return RedirectToAction(nameof(Details), "Courses", new { id = (int)courseId });
         }
 
 
-        private CourseActivityViewModel ToCourseActivityViewModel(CourseActivity act,int? courseId)
+        private CourseActivityViewModel ToCourseActivityViewModel(CourseActivity act, int? courseId)
+
         {
             CourseActivityViewModel ret = mapper.Map<CourseActivityViewModel>(act);
             ret.TeacherDocuments = new List<DocumentViewModel>();
@@ -247,7 +249,28 @@ namespace Lexicon_LMS.Controllers
         }
 
 
-        
-        
+        [AcceptVerbs("GET", "POST")]
+        public async Task<IActionResult> VerifyActivityStartDate(DateTime startDate, int moduleId)
+        {
+
+            var module = await context.Modules.FindAsync(moduleId);
+            if ((startDate - module.StartDate).TotalSeconds < 0)
+            {
+                return Json($"Activity start date can't be before Module start date");
+            }
+            return Json(true);
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        public async Task<IActionResult> VerifyActivityEndDate(DateTime endDate, int moduleId)
+        {
+
+            var module = await context.Modules.FindAsync(moduleId);
+            if (endDate > module.EndDate)
+            {
+                return Json($"Activity end date can't be after Module end date");
+            }
+            return Json(true);
+        }
     }
 }
