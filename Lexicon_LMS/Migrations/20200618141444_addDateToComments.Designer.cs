@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lexicon_LMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200612141907_CoursesForeignKeyToDifficulties")]
-    partial class CoursesForeignKeyToDifficulties
+    [Migration("20200618141444_addDateToComments")]
+    partial class addDateToComments
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,6 +34,34 @@ namespace Lexicon_LMS.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ActivityTypes");
+                });
+
+            modelBuilder.Entity("Lexicon_LMS.Models.AssignmentComments", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Comments")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DocumentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AssignmentComments");
                 });
 
             modelBuilder.Entity("Lexicon_LMS.Models.Course", b =>
@@ -128,6 +156,9 @@ namespace Lexicon_LMS.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModuleId")
@@ -396,6 +427,19 @@ namespace Lexicon_LMS.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("Lexicon_LMS.Models.AssignmentComments", b =>
+                {
+                    b.HasOne("Lexicon_LMS.Models.Document", "Document")
+                        .WithMany("AssignmentComments")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Lexicon_LMS.Models.User", "User")
+                        .WithMany("AssignmentComments")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Lexicon_LMS.Models.Course", b =>

@@ -17,5 +17,6 @@ namespace Lexicon_LMS.Models
 
         public Course Course { get; set; }
         public ICollection<Document> Documents { get; set; }
+        public ICollection<AssignmentComments> AssignmentComments { get; set; }
     }
 }

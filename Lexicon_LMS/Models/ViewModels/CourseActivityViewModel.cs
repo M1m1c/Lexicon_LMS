@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,15 +11,19 @@ namespace Lexicon_LMS.Models.ViewModels
     public class CourseActivityViewModel
     {
         public int Id { get; set; }
+        public string CourseName { get; set; }
+        public string ModuleName { get; set; }
         public string ActivityName { get; set; }
         public string ActivityDescription { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
+        [Remote(action: "VerifyActivityStartDate", controller: "Activity", AdditionalFields = nameof(ModuleId))]
         public DateTime StartDate { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
+        [Remote(action: "VerifyActivityEndDate", controller: "Activity", AdditionalFields = nameof(ModuleId))]
         public DateTime EndDate { get; set; }
 
         public int CourseId { get; set; }
@@ -30,5 +35,6 @@ namespace Lexicon_LMS.Models.ViewModels
         public ICollection<DocumentViewModel> TeacherDocuments { get; set; }
         public ICollection<DocumentViewModel> StudentDocuments { get; set; }
         public DocumentViewModel MyStudentDocument { get; set; }
+        public int ActivityId { get; set; }
     }
 }
