@@ -35,14 +35,9 @@
                             {
                                 @if (item1.CourseId == item.Id)
                                 {
-                                   
-            <ol>
-                
-                    <h8> <a asp-controller="Module" asp-action="Details" asp-route-id="@item1.Id">@item1.ModuleName</a></h8>
-               
-            </ol>
-                                        
-                                   
+                                    <ol>
+                                        <h8> <a asp-controller="Courses" asp-action="Details" asp-route-moduleId="@item1.Id" asp-route-id="@item.Id">@item1.ModuleName</a></h8>
+                                    </ol>
                                 }
 
                             }
@@ -107,7 +102,7 @@
                             Course Name
                         </th>
                         <th>
-                           Module
+                            Module
                         </th>
                         <th>
                             Activity
@@ -119,7 +114,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                   
                 </tbody>
             </table>
         </div>
