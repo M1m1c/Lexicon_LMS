@@ -14,10 +14,12 @@ $(document).ready(function () {
         }]
     });
 
+});
+
+$(document).ready(function () {
     $("#addComments").click(function () {
         $("#commentForm").toggle('slow');
     });
-
 });
 
 function RemoveForm() {
