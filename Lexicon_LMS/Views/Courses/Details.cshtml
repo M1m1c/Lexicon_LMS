@@ -38,7 +38,7 @@
                                 @if (User.IsInRole("Teacher"))
                                 {
                                     <a class="btn btn-danger float-right" asp-action="Delete" asp-controller="Module" asp-route-Id="@module.Id">Delete Module</a>
-                                    <a class="btn btn-warning float-right mr-2" asp-action="Edit" asp-controller="Module" asp-route-Id="@module.Id">Edit Module</a>
+                                    <a class="btn btn-warning float-right mr-2" asp-action="Edit" asp-controller="Module" asp-route-Id="@module.Id" asp-route-Courseid="@Model.Id">Edit Module</a>
                                 }
                             </h2>
                         </div>

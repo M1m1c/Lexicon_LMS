@@ -1,5 +1,4 @@
-﻿
-using Lexicon_LMS.Attributes;
+﻿using Lexicon_LMS.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Lexicon_LMS.Models.ViewModels
 {
-    public class ModuleViewModel
+    public class ModuleEditViewModel
     {
-
         public int Id { get; set; }
         [Display(Name = "Module Name")]
         [Required]
@@ -19,7 +17,7 @@ namespace Lexicon_LMS.Models.ViewModels
         [Required]
         public string Description { get; set; }
 
-        [Remote(action: "VerifyStartDateNoId", controller: "Module", AdditionalFields = "CourseId,EndDate")]
+        [Remote(action: "VerifyStartDateWithId", controller: "Module", AdditionalFields = "CourseId,EndDate,Id")]
         [Display(Name = "Start Date")]
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
@@ -29,7 +27,7 @@ namespace Lexicon_LMS.Models.ViewModels
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
         [AfterStartDate()]
-        [Remote(action: "VerifyEndDateNoId", controller: "Module", AdditionalFields = "CourseId,StartDate")]
+        [Remote(action: "VerifyEndDateWithId", controller: "Module", AdditionalFields = "CourseId,StartDate,Id")]
         public DateTime EndDate { get; set; }
 
         public int CourseId { get; set; }
@@ -38,8 +36,6 @@ namespace Lexicon_LMS.Models.ViewModels
         public ICollection<DocumentViewModel> Documents { get; set; }
         public IEnumerable<CourseActivityViewModel> Activities { get; set; }
 
-        public ICollection<ModuleViewModel> UnavilableDates  { get; set; }
+        public ICollection<ModuleViewModel> UnavilableDates { get; set; }
     }
-
-  
 }

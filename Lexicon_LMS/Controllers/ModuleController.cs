@@ -80,7 +80,7 @@ namespace Lexicon_LMS.Controllers
 
             model.StartDate = course.StartDate;
             model.EndDate = course.EndDate.AddDays(-1);
-            model.UnavilableDates = mapper.Map<ICollection<ModuleViewModel>>(context.Modules.Where(m => m.CourseId == Courseid));
+            model.UnavilableDates = mapper.Map<ICollection<ModuleViewModel>>(context.Modules.Where(m => m.CourseId== Courseid));
             return View(model);
         }
 
@@ -114,7 +114,7 @@ namespace Lexicon_LMS.Controllers
 
         // GET: Activity/Edit/5
         [Authorize(Roles = "Teacher")]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, int Courseid)
         {
             if (id == null)
             {
@@ -126,7 +126,8 @@ namespace Lexicon_LMS.Controllers
             {
                 return NotFound();
             }
-            var model = mapper.Map<ModuleViewModel>(module);
+            var model = mapper.Map<ModuleEditViewModel>(module);
+            model.UnavilableDates = mapper.Map<ICollection<ModuleViewModel>>(context.Modules.Where(m => m.CourseId == Courseid && m.Id != model.Id));
             return View(model);
         }
 
@@ -134,7 +135,7 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ModuleViewModel model)
+        public async Task<IActionResult> Edit(int id, ModuleEditViewModel model)
         {
             if (id != model.Id)
             {
@@ -204,64 +205,106 @@ namespace Lexicon_LMS.Controllers
         }
 
         [AcceptVerbs("GET", "POST")]
-        public IActionResult VerifyStartDate(DateTime startDate, int courseId, DateTime endDate)
+        public IActionResult VerifyStartDateNoId(DateTime startDate, int courseId, DateTime endDate)
+        {
+            var temp = VerifyStartDate(startDate, courseId, endDate, context.Modules.Where(m => m.CourseId == courseId));
+            if (string.IsNullOrEmpty(temp))
+            {
+                return Json(true);
+            }
+            return Json(temp);
+        }
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyEndDateNoId(DateTime endDate, int courseId, DateTime startDate)
+        {
+            var temp = VerifyEndDate(endDate, courseId, startDate, context.Modules.Where(m => m.CourseId == courseId));
+            if (string.IsNullOrEmpty(temp))
+            {
+                return Json(true);
+            }
+            return Json(temp);
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyStartDateWithId(DateTime startDate, int courseId, DateTime endDate, int? id)
+        {
+            var temp = VerifyStartDate(startDate, courseId, endDate, context.Modules.Where(m => m.CourseId == courseId && m.Id != id));
+            if (string.IsNullOrEmpty(temp))
+            {
+                return Json(true);
+            }
+            return Json(temp);
+        }
+
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult VerifyEndDateWithId(DateTime endDate, int courseId, DateTime startDate, int? id)
+        {
+            var temp = VerifyEndDate(endDate, courseId, startDate, context.Modules.Where(m => m.CourseId == courseId && m.Id!=id));
+            if (string.IsNullOrEmpty(temp))
+            {
+                return Json(true);
+            }
+            return Json(temp);
+        }
+
+        public string VerifyStartDate(DateTime startDate, int courseId, DateTime endDate, IQueryable<Module> modules)
         {
             var course = unitOfWork.CourseRepository.GetCourseById(courseId);
 
             if ((startDate - course.StartDate).TotalSeconds < 0)
             { 
-                return Json($"Module Start date can't be before course start date");
+                return $"Module Start date can't be before course start date";
             }
 
-            var inside = VerifyNotInsideOtherModule(startDate.Date, courseId);
+            var inside = VerifyNotInsideOtherModule(startDate.Date, modules);
 
             if (!string.IsNullOrEmpty(inside)) 
             {
-                return Json(inside);
+                return inside;
             }
 
-            var overlapping = VerifyNotOverlapping(startDate.Date, endDate.Date, courseId);
+            var overlapping = VerifyNotOverlapping(startDate.Date, endDate.Date,modules);
 
             if (!string.IsNullOrEmpty(overlapping))
             {
-                return Json(overlapping);
+                return overlapping;
             }
 
-            return Json(true);
+            return "";
         }
 
 
         [AcceptVerbs("GET", "POST")]
-        public IActionResult VerifyEndDate(DateTime endDate, int courseId,DateTime startDate)
+        public string VerifyEndDate(DateTime endDate, int courseId,DateTime startDate, IQueryable<Module> modules)
         {
             var course = unitOfWork.CourseRepository.GetCourseById(courseId);
 
             if ((endDate - course.EndDate).TotalSeconds > 0)
             {
-                return Json($"Module End date can't be after course End date");
+                return $"Module End date can't be after course End date";
             }
 
-            var inside = VerifyNotInsideOtherModule(endDate.Date, courseId);
+            var inside = VerifyNotInsideOtherModule(endDate.Date,modules);
 
             if (!string.IsNullOrEmpty(inside))
             {
-                return Json(inside);
+                return inside;
             }
 
-            var overlapping = VerifyNotOverlapping(startDate.Date, endDate.Date, courseId);
+            var overlapping = VerifyNotOverlapping(startDate.Date, endDate.Date,modules);
 
             if (!string.IsNullOrEmpty(overlapping))
             {
-                return Json(overlapping);
+                return overlapping;
             }
 
-            return Json(true);
+            return "";
         }
 
         
-        private string VerifyNotInsideOtherModule(DateTime Date , int courseId)
+        private string VerifyNotInsideOtherModule(DateTime Date , IQueryable<Module> modules)
         {
-            foreach (var module in context.Modules.Where(m => m.CourseId == courseId))
+            foreach (var module in modules)
             {
                 var modSDate = module.StartDate.Date;
                 var modEDate = module.EndDate.Date;
@@ -274,9 +317,9 @@ namespace Lexicon_LMS.Controllers
             return "";
         }
 
-        private string VerifyNotOverlapping(DateTime startDate,DateTime endDate, int courseId)
+        private string VerifyNotOverlapping(DateTime startDate,DateTime endDate, IQueryable<Module> modules)
         {
-            foreach (var module in context.Modules.Where(m => m.CourseId == courseId))
+            foreach (var module in modules)
             {
                 var modSDate = module.StartDate.Date;
                 var modEDate = module.EndDate.Date;
