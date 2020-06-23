@@ -3,9 +3,10 @@
 @*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
+
 <div class="row mt-5 mb-5">
     <div class="col-sm-12">
-        <a asp-controller="Courses" asp-action="Create" class="btn btn-primary mr-3">Add Course</a>
+        <a class="btn btn-primary mr-3" asp-controller="Courses" asp-action="Create">Add Course</a>
     </div>
 </div>
 
@@ -31,117 +32,120 @@
     <div class="tab-content">
         <div id="current" class="container tab-pane active">
             <br>
-            <h3>Current Courses</h3>
-           
-                <ul>
+            <div class="row">
+                <h3 class="col-4">Current Courses</h3>
+                <h3 class="col-4">Current Module</h3>
+            </div>
+            <hr />
 
+
+            <ul>
+
+                @if (Model != null)
+                {
+                    @if (Model.OnGoingCourses.Count > 0)
+                    {
+
+                        @foreach (var item in Model.OnGoingCourses)
+                        {
+                            //i++;
+                            <li>
+                                <div class="row">
+                                    <h5 class="col-4"> <a asp-controller="Courses" asp-action="Details" asp-route-id="@item.Id">@item.CourseName</a></h5>
+                                    <h5 class="col-4">
+                                        @foreach (var item1 in Model.onGoingModules)
+                                        {
+                                            @if (item1.CourseId == item.Id && item1.StartDate <= DateTime.Now.Date && item1.EndDate >= DateTime.Now.Date)
+                                            {
+                                                <a class="row" asp-controller="courses" asp-action="Details" asp-route-moduleId="@item1.Id" asp-route-id="@item.Id">@item1.ModuleName</a>
+
+                                            }
+                                        }
+                                    </h5>
+                                </div>
+                                
+                                <hr />
+                            </li>
+                        }
+                    }
+                }
+            </ul>
+        </div>
+
+        <div id="future" class="container tab-pane fade">
+            <h5>Future Courses</h5>
+            <hr />
+            <div class="backcard border-success ">
+                <ul>
                     @if (Model != null)
                     {
-                        @if (Model.OnGoingCourses.Count > 0)
+                        @if (Model.futureCourses.Count > 0)
                         {
-
-                            @foreach (var item in Model.OnGoingCourses)
+                            @foreach (var item in Model.futureCourses)
                             {
-                                //i++;
                                 <li>
                                     <h5> <a asp-controller="Courses" asp-action="Details" asp-route-id="@item.Id">@item.CourseName</a></h5>
-
                                 </li>
-                                //TODO fix modeule for each course
-
-                                @foreach (var item1 in Model.onGoingModules)
-                                {
-                                    @if (item1.CourseId == item.Id)
-                                    {
-
-                                        <ol>
-
-                                            <h8> <a asp-controller="Module" asp-action="Details" asp-route-id="@item1.Id">@item1.ModuleName</a></h8>
-
-                                        </ol>
-
-
-                                    }
-
                             }
                         }
                     }
-                }
-            </ul>
+                </ul>
+            </div>
         </div>
-    </div>
-    <div class="col-6">
-        <h5>Future Courses</h5>
-        <hr />
-        <div class="backcard border-success ">
-            <ul>
-                @if (Model != null)
-                {
-                    @if (Model.futureCourses.Count > 0)
-                    {
-                        @foreach (var item in Model.futureCourses)
-                        {
-                            <li>
-                                <h5> <a asp-controller="Courses" asp-action="Details" asp-route-id="@item.Id">@item.CourseName</a></h5>
-                            </li>
-                        }
-                    }
-                }
-            </ul>
-        </div>
-    </div>
 
-</div>
-<hr />
-<div class="  row justify-content-around">
-    <div class="col-3">
-        <h5>Past Courses</h5>
-        <hr />
-        <div class="backcard border-danger">
-            <ul>
-                @if (Model != null)
-                {
-                    @if (Model.pastCourses.Count > 0)
+
+
+        <div id="past" class="container tab-pane fade">
+            <h5>Past Courses</h5>
+            <hr />
+            <div class="backcard border-danger">
+                <ul>
+                    @if (Model != null)
                     {
-                        @foreach (var item in Model.pastCourses)
+                        @if (Model.pastCourses.Count > 0)
                         {
-                            <li>
-                                <h5> <a asp-controller="Courses" asp-action="Details" asp-route-id="@item.Id">@item.CourseName</a></h5>
-                            </li>
+                            @foreach (var item in Model.pastCourses)
+                            {
+                                <li>
+                                    <h5> <a asp-controller="Courses" asp-action="Details" asp-route-id="@item.Id">@item.CourseName</a></h5>
+                                </li>
+                            }
                         }
                     }
-                }
-            </ul>
+                </ul>
+            </div>
         </div>
-    </div>
-    <div class="col">
-        <h5>Submitted Assignments</h5>
-        <hr />
-        <div class="backcard border-success">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            Course Name
-                        </th>
-                        <th>
-                            Module
-                        </th>
-                        <th>
-                            Activity
-                        </th>
-                        <th>
-                            Username
-                        </th>
-                        <th>
-                            Submittion Time
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var assignment in Model.Assignments)
-                    {
+
+
+
+        <div id="assignments" class="container tab-pane fade">
+            <h5>Submitted Assignments</h5>
+            <hr />
+            <div class="backcard border-success">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Course Name
+                            </th>
+                            <th>
+                                Module
+                            </th>
+                            <th>
+                                Activity
+                            </th>
+                            <th>
+                                Username
+                            </th>
+                            <th>
+                                Submittion Time
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var assignment in Model.Assignments)
+                        {
                             <tr>
                                 <td>
                                     @assignment.Activity.Module.Course.CourseName
@@ -156,22 +160,25 @@
                                     @assignment.User.UserName
                                 </td>
                                 <td>
-                                    @assignment.UploadDate.ToShortDateString()
+                                    @assignment.UploadDate.ToString("g")
                                 </td>
                                 <td>
                                     <a asp-controller="document" asp-action="details" asp-route-id="@assignment.Id" class="btn btn-info">View</a>
 
                                 </td>
                             </tr>
-                        
-                    }
 
-
-                </tbody>
-            </table>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
+
     </div>
 </div>
+
+
+
 
 @section scripts{
 
