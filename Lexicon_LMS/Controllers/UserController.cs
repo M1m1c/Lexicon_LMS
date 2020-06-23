@@ -33,7 +33,7 @@ namespace Lexicon_LMS.Controllers
                 return RedirectToAction("StudentStartPartial", "Student");
             }
 
-            return View();
+            return RedirectToAction("Index","Home");
         }
     }
 }
