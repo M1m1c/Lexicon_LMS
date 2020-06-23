@@ -13,14 +13,20 @@ namespace Lexicon_LMS.Models.ViewModels
         public int Id { get; set; }
         public string CourseName { get; set; }
         public string ModuleName { get; set; }
+
+        [Display(Name = "Activity")]
         public string ActivityName { get; set; }
+
+        [Display(Name = "Description")]
         public string ActivityDescription { get; set; }
 
+        [Display(Name = "Start date")]
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
         [Remote(action: "VerifyActivityStartDate", controller: "Activity", AdditionalFields = nameof(ModuleId))]
         public DateTime StartDate { get; set; }
 
+        [Display(Name = "End date")]
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
         [Remote(action: "VerifyActivityEndDate", controller: "Activity", AdditionalFields = nameof(ModuleId))]
@@ -28,6 +34,8 @@ namespace Lexicon_LMS.Models.ViewModels
 
         public int CourseId { get; set; }
         public int ModuleId { get; set; }
+
+        [Display(Name = "Activity type")]
         public string ActivityTypeName { get; set; }
         public string ActivityTypeId { get; set; }
         public IEnumerable<SelectListItem> ActivityTypes { get; set; }
