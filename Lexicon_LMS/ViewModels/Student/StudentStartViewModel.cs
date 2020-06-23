@@ -10,7 +10,7 @@ namespace Lexicon_LMS.ViewModels.Student
 {
     public class StudentStartViewModel
     {
-        public List<Module> OnGoingModules { get; set; }
+        public Module CurrentModule { get; set; }
         public List<Module> PastModules { get; set; }
         public List<Module> FutureModules { get; set; }
         public List<CourseActivity> PastActivities { get; set; }
