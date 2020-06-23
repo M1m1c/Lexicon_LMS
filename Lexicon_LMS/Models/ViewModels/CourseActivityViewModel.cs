@@ -13,7 +13,11 @@ namespace Lexicon_LMS.Models.ViewModels
         public int Id { get; set; }
         public string CourseName { get; set; }
         public string ModuleName { get; set; }
+
+        [Display(Name = "Activity")]
         public string ActivityName { get; set; }
+
+        [Display(Name = "Description")]
         public string ActivityDescription { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:D}")]
