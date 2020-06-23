@@ -12,7 +12,6 @@ namespace Lexicon_LMS.Models.ViewModels
         public List<Course> pastCourses { get; set; }
         public List<Course> futureCourses { get; set; }
         public List<Module> onGoingModules { get; set; }
-
-
+        public List<Document> Assignments { get; set; }
     }
 }

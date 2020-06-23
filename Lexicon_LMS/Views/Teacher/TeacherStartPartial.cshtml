@@ -108,12 +108,42 @@
                             Activity
                         </th>
                         <th>
+                            Username
+                        </th>
+                        <th>
                             Submittion Time
                         </th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach (var assignment in Model.Assignments)
+                    {
+                            <tr>
+                                <td>
+                                    @assignment.Course.CourseName
+                                </td>
+                                <td>
+                                    @assignment.Module.ModuleName
+                                </td>
+                                <td>
+                                    @assignment.Activity.ActivityName
+                                </td>
+                                <td>
+                                    @assignment.User.UserName
+                                </td>
+                                <td>
+                                    @assignment.UploadDate.ToShortDateString()
+                                </td>
+                                <td>
+                                    <a asp-controller="document" asp-action="details" asp-route-id="@assignment.Id" class="btn btn-info">View</a>
+
+                                </td>
+                            </tr>
+                        
+                    }
+
+
                 </tbody>
             </table>
         </div>
