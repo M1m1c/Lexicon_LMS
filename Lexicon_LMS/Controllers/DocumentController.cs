@@ -296,7 +296,7 @@ namespace Lexicon_LMS.Controllers
 
             context.Documents.Remove(doc);
             await context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index), "Courses");
+            return RedirectToAction("Start", "User");
         }
 
         [HttpGet("download")]
