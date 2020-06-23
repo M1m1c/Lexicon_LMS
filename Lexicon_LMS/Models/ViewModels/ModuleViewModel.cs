@@ -19,7 +19,7 @@ namespace Lexicon_LMS.Models.ViewModels
         [Required]
         public string Description { get; set; }
 
-        [Remote(action: "VerifyStartDate", controller: "Module", AdditionalFields = "CourseId,EndDate")]
+        [Remote(action: "VerifyStartDateNoId", controller: "Module", AdditionalFields = "CourseId,EndDate")]
         [Display(Name = "Start Date")]
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
@@ -29,7 +29,7 @@ namespace Lexicon_LMS.Models.ViewModels
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DataType(DataType.Date)]
         [AfterStartDate()]
-        [Remote(action: "VerifyEndDate", controller: "Module", AdditionalFields = "CourseId,StartDate")]
+        [Remote(action: "VerifyEndDateNoId", controller: "Module", AdditionalFields = "CourseId,StartDate")]
         public DateTime EndDate { get; set; }
 
         public int CourseId { get; set; }
