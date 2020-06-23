@@ -41,7 +41,10 @@
         </dd>
     </dl>
 </div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-controller="Teacher" asp-action="Users">Back to List</a>
-</div>
+@*<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |*@
+<hr />
+    <div>
+        <a class="btn btn-warning" asp-controller="Teacher" asp-action="Users">Back</a>
+    </div>
+@*</div>*@
