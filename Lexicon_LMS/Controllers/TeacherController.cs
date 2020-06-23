@@ -82,7 +82,7 @@ namespace Lexicon_LMS.Controllers
                     FirstName = userViewModel.FirstName,
                     LastName = userViewModel.LastName,
                     Email = userViewModel.Email,
-                    UserName = userViewModel.Email,
+                   UserName = userViewModel.Email,
                     Age = userViewModel.Age
 
                 };

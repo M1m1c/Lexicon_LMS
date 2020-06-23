@@ -32,7 +32,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
+                <input asp-for="Email"  class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -41,7 +41,7 @@
 
                     @if (Model.Role != "Student")
                     {
-                       
+
                         <input type="hidden" asp-for="Role" value="Teacher" />
                         <select disabled>
                             <option value="Teacher">Teacher</option>
@@ -65,10 +65,11 @@
         </form>
     </div>
 </div>
-
-<div>
+@*<div>
     <a class="btn btn-warning" asp-controller="Teacher" asp-action="Users">Back to List</a>
-</div>
+</div>*@
+<hr />
+<a asp-controller="Courses" asp-action="Details" asp-route-Id="@Model.CourseId"><input type="submit" value="Back" class="btn btn-warning" /></a>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
