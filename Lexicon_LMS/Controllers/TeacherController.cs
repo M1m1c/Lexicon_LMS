@@ -106,7 +106,7 @@ namespace Lexicon_LMS.Controllers
 
                     if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
 
-                  
+                    TempData["UserMessage"] = $"User: {user.FullName} - was added.";
                     return RedirectToAction(nameof(Users));
                 }
 
@@ -193,7 +193,7 @@ namespace Lexicon_LMS.Controllers
                         {
                             await userManager.RemoveFromRolesAsync(user, test.Where(t => t != role.Name));
                         }
-
+                        TempData["UserMessage"] = $"User: {user.FullName} - Saved changes.";
                         await context.SaveChangesAsync();
 
                     }
@@ -246,6 +246,7 @@ namespace Lexicon_LMS.Controllers
             var user = await context.Users.FindAsync(id);
             context.Users.Remove(user);
             await context.SaveChangesAsync();
+            TempData["UserMessage"] = $"User: {user.FullName} - was deleted.";
             return RedirectToAction(nameof(Users));
         }
 

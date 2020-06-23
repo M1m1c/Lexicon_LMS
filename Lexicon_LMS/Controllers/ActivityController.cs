@@ -136,7 +136,7 @@ namespace Lexicon_LMS.Controllers
                         context.Activities.Add(activity);
                         module.Activities.Add(activity);
                         await context.SaveChangesAsync();
-
+                        TempData["UserMessage"] = $"Activity: {activity.ActivityName} - was added.";
                         return RedirectToAction(nameof(Details), "Courses", new { Id = module.CourseId });
                     }
                     catch
@@ -184,6 +184,7 @@ namespace Lexicon_LMS.Controllers
                 {
                     context.Update(activity);
                     await context.SaveChangesAsync();
+                    TempData["UserMessage"] = $"Activity: {activity.ActivityName} - Saved changes.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -230,6 +231,7 @@ namespace Lexicon_LMS.Controllers
             var activity = await context.Activities.FindAsync(id);
             context.Activities.Remove(activity);
             await context.SaveChangesAsync();
+            TempData["UserMessage"] = $"Activity: {activity.ActivityName} - was deleted.";
             return RedirectToAction(nameof(Details), "Courses", new { id = (int)courseId });
         }
 
