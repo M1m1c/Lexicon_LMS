@@ -15,9 +15,11 @@ namespace Lexicon_LMS.Models.ViewModels
         public int Age { get; set; }
 
         [Required]
+        [Display(Name = "First name")]
         public String FirstName { get; set; }
 
         [Required]
+        [Display(Name = "Last name")]
         public String LastName { get; set; }
 
         [Required]
