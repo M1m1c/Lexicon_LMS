@@ -20,11 +20,13 @@ namespace Lexicon_LMS.Controllers
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
         private readonly UserManager<User> userManager;
-        public ActivityController(ApplicationDbContext context, IMapper mapper, UserManager<User> userManager)
+        private readonly DocumentController _documentController;
+        public ActivityController(ApplicationDbContext context, IMapper mapper, UserManager<User> userManager, DocumentController documentController)
         {
             this.context = context;
             this.mapper = mapper;
             this.userManager = userManager;
+            _documentController = documentController;
         }
         // GET: Activity
         public ActionResult Index()
@@ -228,9 +230,15 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id, int? courseId)
         {
             var activity = await context.Activities.FindAsync(id);
-            context.Activities.Remove(activity);
-            await context.SaveChangesAsync();
-            return RedirectToAction(nameof(Details), "Courses", new { id = (int)courseId });
+            var docs = context.Documents.Where(d => d.ActivityId == id);
+            var fileDeletionSuccess = await _documentController.CallDeletionOfFiles(docs.ToList());
+            if (fileDeletionSuccess == true)
+            {
+                context.Activities.Remove(activity);
+                await context.SaveChangesAsync();
+                return RedirectToAction(nameof(Details), "Courses", new { id = (int)courseId });
+            }
+            return NotFound();
         }
 
 
