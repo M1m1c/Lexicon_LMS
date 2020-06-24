@@ -146,27 +146,32 @@
                     <tbody>
                         @foreach (var assignment in Model.Assignments)
                         {
-                            <tr>
-                                <td>
-                                    @assignment.Activity.Module.Course.CourseName
-                                </td>
-                                <td>
-                                    @assignment.Activity.Module.ModuleName
-                                </td>
-                                <td>
-                                    @assignment.Activity.ActivityName
-                                </td>
-                                <td>
-                                    @assignment.User.UserName
-                                </td>
-                                <td>
-                                    @assignment.UploadDate.ToString("g")
-                                </td>
-                                <td>
-                                    <a asp-controller="document" asp-action="details" asp-route-id="@assignment.Id" class="btn btn-info">View</a>
+                            //TODO fix this listing it does not work, cuasese crashes
+                            @if (assignment.Activity.Module != null)
+                            {
+                                <tr>
+                                    <td>
+                                        @assignment.Activity.Module.Course.CourseName
+                                    </td>
+                                    <td>
+                                        @assignment.Activity.Module.ModuleName
+                                    </td>
+                                    <td>
+                                        @assignment.Activity.ActivityName
+                                    </td>
+                                    <td>
+                                        @assignment.User.UserName
+                                    </td>
+                                    <td>
+                                        @assignment.UploadDate.ToString("g")
+                                    </td>
+                                    <td>
+                                        <a asp-controller="document" asp-action="details" asp-route-id="@assignment.Id" class="btn btn-info">View</a>
 
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
+                            }
+
 
                         }
                     </tbody>
