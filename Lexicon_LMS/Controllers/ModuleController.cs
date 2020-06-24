@@ -100,7 +100,7 @@ namespace Lexicon_LMS.Controllers
                     // TODO: Add insert logic here
                     context.Add(module);
                     await context.SaveChangesAsync();
-
+                    TempData["UserMessage"] = $"Module: {module.ModuleName} - was added.";
                     return RedirectToAction("Details", "Courses", new { Id = moduleViewModel.CourseId });
                 }
                 catch
@@ -151,6 +151,7 @@ namespace Lexicon_LMS.Controllers
                 {
                     context.Update(module);
                     await context.SaveChangesAsync();
+                    TempData["UserMessage"] = $"Module: {module.ModuleName} - saved changes.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -196,7 +197,6 @@ namespace Lexicon_LMS.Controllers
             
             var module = await context.Modules.FindAsync(id);
             var courseId = module.CourseId;
-
             var docs = context.Documents.Where(d => d.ModuleId == id);
             var fileDeletionSuccess = await _documentController.CallDeletionOfFiles(docs.ToList());
             if (fileDeletionSuccess == true)
@@ -206,6 +206,9 @@ namespace Lexicon_LMS.Controllers
                 return RedirectToAction("Details", "Courses", new { Id = courseId });
             }
             return NotFound();
+
+            //TempData["UserMessage"] = $"Module: {module.ModuleName} - was deleted.";
+           
         }
 
         public IActionResult AddParticipant(int courseId)

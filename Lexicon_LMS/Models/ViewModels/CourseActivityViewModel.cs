@@ -37,6 +37,8 @@ namespace Lexicon_LMS.Models.ViewModels
 
         [Display(Name = "Activity type")]
         public string ActivityTypeName { get; set; }
+
+        [Display(Name = "Activity type")]
         public string ActivityTypeId { get; set; }
         public IEnumerable<SelectListItem> ActivityTypes { get; set; }
 

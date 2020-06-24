@@ -108,6 +108,7 @@ namespace Lexicon_LMS.Controllers
                 var course = _mapper.Map<Course>(model);
                 _unitOfWork.CourseRepository.Add(course);
                 await _unitOfWork.CompleateAsync();
+                TempData["UserMessage"] = $"Course: {model.CourseName} - was added.";
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
@@ -147,6 +148,7 @@ namespace Lexicon_LMS.Controllers
                 try
                 {
                     _context.Update(course);
+                    TempData["UserMessage"] = $"Course: {course.CourseName} - Saved changes.";
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -223,6 +225,9 @@ namespace Lexicon_LMS.Controllers
             }
 
             return NotFound();
+
+            //TempData["UserMessage"] = $"Course: {course.CourseName} - was deleted.";
+           
         }
 
 
