@@ -26,8 +26,9 @@ namespace Lexicon_LMS.Controllers
         private readonly IMapper mapper;
         private readonly IUnitOfWork unitOfWork;
         private readonly IConfiguration _configuration;
+        private readonly DocumentController _documentController;
 
-        public TeacherController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper, IUnitOfWork unitOfWork, IConfiguration configuration)
+        public TeacherController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper, IUnitOfWork unitOfWork, IConfiguration configuration, DocumentController documentController)
         {
             this.context = context;
             this.userManager = userManager;
@@ -35,6 +36,7 @@ namespace Lexicon_LMS.Controllers
             this.mapper = mapper;
             this.unitOfWork = unitOfWork;
             _configuration = configuration;
+            _documentController = documentController;
         }
 
         [Authorize(Roles = "Teacher")]
@@ -244,10 +246,18 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> DeleteUserConfirmed(string id)
         {
             var user = await context.Users.FindAsync(id);
-            context.Users.Remove(user);
-            await context.SaveChangesAsync();
-            TempData["UserMessage"] = $"User: {user.FullName} - was deleted.";
-            return RedirectToAction(nameof(Users));
+            var docs = context.Documents.Where(d => d.UserId == id);
+            var fileDeletionSuccess = await _documentController.CallDeletionOfFiles(docs.ToList());
+            if (fileDeletionSuccess == true)
+            {
+                context.Users.Remove(user);
+                await context.SaveChangesAsync();
+                return RedirectToAction(nameof(Users));
+            }
+            return NotFound();
+
+           // TempData["UserMessage"] = $"User: {user.FullName} - was deleted.";
+           
         }
 
         [Authorize(Roles = "Teacher")]

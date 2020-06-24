@@ -19,12 +19,14 @@ namespace Lexicon_LMS.Controllers
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
         private readonly IUnitOfWork unitOfWork;
+        private readonly DocumentController _documentController;
 
-        public ModuleController(ApplicationDbContext context, IMapper mapper, IUnitOfWork unitOfWork)
+        public ModuleController(ApplicationDbContext context, IMapper mapper, IUnitOfWork unitOfWork, DocumentController documentController)
         {
             this.context = context;
             this.mapper = mapper;
             this.unitOfWork = unitOfWork;
+            _documentController = documentController;
         }
         // GET: Module
         public ActionResult Index()
@@ -195,10 +197,18 @@ namespace Lexicon_LMS.Controllers
             
             var module = await context.Modules.FindAsync(id);
             var courseId = module.CourseId;
-            context.Modules.Remove(module);
-            await context.SaveChangesAsync();
-            TempData["UserMessage"] = $"Module: {module.ModuleName} - was deleted.";
-            return RedirectToAction("Details","Courses", new { Id = courseId });
+            var docs = context.Documents.Where(d => d.ModuleId == id);
+            var fileDeletionSuccess = await _documentController.CallDeletionOfFiles(docs.ToList());
+            if (fileDeletionSuccess == true)
+            {
+                context.Modules.Remove(module);
+                await context.SaveChangesAsync();
+                return RedirectToAction("Details", "Courses", new { Id = courseId });
+            }
+            return NotFound();
+
+            //TempData["UserMessage"] = $"Module: {module.ModuleName} - was deleted.";
+           
         }
 
         public IActionResult AddParticipant(int courseId)

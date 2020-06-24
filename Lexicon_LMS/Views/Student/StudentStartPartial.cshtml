@@ -4,11 +4,14 @@
 @inject UserManager<User> UserManager
 
 <h1 class="mb-5"><a asp-controller="Courses" asp-action="Details" asp-route-Id="@UserManager.GetUserAsync(User).Result.CourseId">@Model.CourseName</a></h1>
-
+@if (@Model.CurrentModule !=null)
+{
 <h3>
     Current Module:
     <a asp-controller="Courses" asp-action="Details" asp-route-moduleId="@Model.CurrentModule.Id" asp-route-id="@Model.CourseId">@Model.CurrentModule.ModuleName</a>
 </h3>
+}
+
 
 
 <div class="container">
