@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Lexicon_LMS.Data;
 using Lexicon_LMS.Models;
-using Lexicon_LMS.ViewModels.Student;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -96,6 +95,14 @@ namespace Lexicon_LMS.Controllers
                 OnGoingAssignments = ongoingAssignments,
                 LateAssignments = lateAssignments
             };
+
+
+            IQueryable<Document> myDocs = context.Documents
+                .Include(d => d.Course).Include(d => d.Module)
+                .Include(d => d.Activity).Include(d => d.User)
+                .Where(d => d.UserId == currentUserId);
+            viewModel.MyDocuments = myDocs.ToList();
+
             return View(viewModel);
 
 

@@ -1,12 +1,13 @@
 ﻿
 using Lexicon_LMS.Models;
 using System;
+using Lexicon_LMS.Models.ViewModels;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lexicon_LMS.ViewModels.Student
+namespace Lexicon_LMS.Models
 {
     public class StudentStartViewModel
     {
@@ -21,5 +22,6 @@ namespace Lexicon_LMS.ViewModels.Student
         public IEnumerable<CourseActivity> OnGoingAssignments { get; set; }
         public int CourseId { get; set; }
         public string CourseName { get; set; }
+        public List<Document> MyDocuments { get; set; }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lexicon_LMS.Models.ViewModels
+namespace Lexicon_LMS.Models
 {
     public class TeacherPageViewModel
     {
