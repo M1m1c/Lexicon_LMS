@@ -70,16 +70,16 @@ namespace Lexicon_LMS.Controllers
             var activities = await context.Activities.Include(a => a.Documents).ToListAsync();
             var assignmentType = await context.ActivityTypes.FirstOrDefaultAsync(t => t.Name == "Assignment");
 
-            var ongoingModules = modules.Where(m => m.CourseId == studentCourse.Course.Id && m.StartDate <= today && m.EndDate >= today).ToList();
-            var pastModules = modules.Where(m => m.CourseId == studentCourse.Course.Id && m.EndDate < today).ToList();
-            var futureModules = modules.Where(m => m.CourseId == studentCourse.Course.Id && m.StartDate > today).ToList();
-            var ongoingActivities = activities.Where(a => a.StartDate <= today && a.EndDate >= today && a.Module.Course.Id == studentCourse.Course.Id);
+            var ongoingModules = modules.Where(m => m.CourseId == studentCourse.CourseId && m.StartDate <= today && m.EndDate >= today).ToList();
+            var pastModules = modules.Where(m => m.CourseId == studentCourse.CourseId && m.EndDate < today).ToList();
+            var futureModules = modules.Where(m => m.CourseId == studentCourse.CourseId && m.StartDate > today).ToList();
+            var ongoingActivities = activities.Where(a => a.StartDate <= today && a.EndDate >= today && a.Module.CourseId == studentCourse.CourseId);
             var ongoingAssignments = ongoingActivities?.Where(a => a.ActivityTypeId == assignmentType.Id);
             var lateAssignments = activities.Where(a => a.EndDate < today && a.ActivityTypeId == assignmentType.Id && (a.Documents.FirstOrDefault(d => d.UserId == currentUserId) == null));
 
             var viewModel = new StudentStartViewModel
             {
-                CourseId = studentCourse.Course.Id,
+                CourseId = (int)studentCourse.CourseId,
                 CourseName = studentCourse.Course.CourseName,
                 OnGoingModules = ongoingModules,
                 PastModules = pastModules,
