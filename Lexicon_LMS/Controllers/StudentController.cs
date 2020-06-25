@@ -60,7 +60,6 @@ namespace Lexicon_LMS.Controllers
 
             return View();
         }
-
         public async Task<IActionResult> StudentStartPartial()
         {
             var currentUserId = userManager.GetUserId(User);
@@ -69,19 +68,26 @@ namespace Lexicon_LMS.Controllers
             var modules = await context.Modules.Include(m => m.Activities).ToListAsync();
             var activities = await context.Activities.Include(a => a.Documents).ToListAsync();
             var assignmentType = await context.ActivityTypes.FirstOrDefaultAsync(t => t.Name == "Assignment");
+            var myDocument = context.Documents.Where(d => d.UserId == currentUserId);
 
-            var ongoingModules = modules.Where(m => m.CourseId == studentCourse.CourseId && m.StartDate <= today && m.EndDate >= today).ToList();
+            var currentModule = modules.FirstOrDefault(m => m.CourseId == studentCourse.CourseId && m.StartDate <= today && m.EndDate >= today);
             var pastModules = modules.Where(m => m.CourseId == studentCourse.CourseId && m.EndDate < today).ToList();
             var futureModules = modules.Where(m => m.CourseId == studentCourse.CourseId && m.StartDate > today).ToList();
-            var ongoingActivities = activities.Where(a => a.StartDate <= today && a.EndDate >= today && a.Module.CourseId == studentCourse.CourseId);
-            var ongoingAssignments = ongoingActivities?.Where(a => a.ActivityTypeId == assignmentType.Id);
+            var ongoingActivities = activities.Where(a => a.StartDate <= today && a.EndDate >= today && a.Module.CourseId == studentCourse.CourseId && !myDocument.Any(d => d.ActivityId == a.ActivityTypeId));
+            var ongoingAssignments = ongoingActivities?.Where(a => a.ActivityTypeId == assignmentType.Id && !myDocument.Any(d => d.ActivityId == a.ActivityTypeId));
             var lateAssignments = activities.Where(a => a.EndDate < today && a.ActivityTypeId == assignmentType.Id && (a.Documents.FirstOrDefault(d => d.UserId == currentUserId) == null));
+
+            foreach (var item in ongoingActivities)
+            {
+                var type = await context.ActivityTypes.FindAsync(item.ActivityTypeId);
+                item.ActivityType = type;
+            }
 
             var viewModel = new StudentStartViewModel
             {
                 CourseId = (int)studentCourse.CourseId,
                 CourseName = studentCourse.Course.CourseName,
-                OnGoingModules = ongoingModules,
+                CurrentModule = currentModule,
                 PastModules = pastModules,
                 FutureModules = futureModules,
                 FutureActivites = null,
