@@ -281,22 +281,57 @@ namespace Lexicon_LMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (await DeleteFile(id))
+            {             
+                return RedirectToAction("Start", "User");
+            }
+            return NotFound();
+        }
+         private async Task<bool> DeleteFile(int id)
+        {
+            var retflag = false;
             var doc = await context.Documents.FindAsync(id);
+
+            context.Documents.Remove(doc);
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                return retflag;
+            }
+            
+
             if (System.IO.File.Exists(doc.FilePath))
             {
                 System.IO.File.Delete(doc.FilePath);
+                retflag = true;
             }
 
-            var path = doc.FilePath.Replace(doc.Name,"");
+            var path = doc.FilePath.Replace(doc.Name, "");
 
             if (Directory.GetFiles(path).Length == 0 && Directory.GetDirectories(path).Length == 0)
             {
-                Directory.Delete(path, true);
+                Directory.Delete(path, false);                
             }
 
-            context.Documents.Remove(doc);
-            await context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index), "Courses");
+          
+            return retflag;
+        }
+
+        public async Task<bool> CallDeletionOfFiles(List<Document> docs)
+        {
+            if (docs != null && docs.Count() > 0)
+            {
+                foreach (var d in docs)
+                {
+                  return await DeleteFile(d.Id);
+                }
+            }
+            return true;
         }
 
         [HttpGet("download")]

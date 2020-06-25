@@ -11,8 +11,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.Editing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -24,8 +26,9 @@ namespace Lexicon_LMS.Controllers
         private readonly IMapper mapper;
         private readonly IUnitOfWork unitOfWork;
         private readonly IConfiguration _configuration;
+        private readonly DocumentController _documentController;
 
-        public TeacherController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper, IUnitOfWork unitOfWork, IConfiguration configuration)
+        public TeacherController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper, IUnitOfWork unitOfWork, IConfiguration configuration, DocumentController documentController)
         {
             this.context = context;
             this.userManager = userManager;
@@ -33,6 +36,7 @@ namespace Lexicon_LMS.Controllers
             this.mapper = mapper;
             this.unitOfWork = unitOfWork;
             _configuration = configuration;
+            _documentController = documentController;
         }
 
         [Authorize(Roles = "Teacher")]
@@ -104,7 +108,7 @@ namespace Lexicon_LMS.Controllers
 
                     if (!addToRoleResult.Succeeded) throw new Exception(string.Join("\n", addToRoleResult.Errors));
 
-                  
+                    TempData["UserMessage"] = $"User: {user.FullName} - was added.";
                     return RedirectToAction(nameof(Users));
                 }
 
@@ -191,7 +195,7 @@ namespace Lexicon_LMS.Controllers
                         {
                             await userManager.RemoveFromRolesAsync(user, test.Where(t => t != role.Name));
                         }
-
+                        TempData["UserMessage"] = $"User: {user.FullName} - Saved changes.";
                         await context.SaveChangesAsync();
 
                     }
@@ -242,25 +246,42 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> DeleteUserConfirmed(string id)
         {
             var user = await context.Users.FindAsync(id);
-            context.Users.Remove(user);
-            await context.SaveChangesAsync();
-            return RedirectToAction(nameof(Users));
+            var docs = context.Documents.Where(d => d.UserId == id);
+            var fileDeletionSuccess = await _documentController.CallDeletionOfFiles(docs.ToList());
+            if (fileDeletionSuccess == true)
+            {
+                context.Users.Remove(user);
+                await context.SaveChangesAsync();
+                return RedirectToAction(nameof(Users));
+            }
+            return NotFound();
+
+           // TempData["UserMessage"] = $"User: {user.FullName} - was deleted.";
+           
         }
 
         [Authorize(Roles = "Teacher")]
-        public  IActionResult TeacherStartPartial()
+        public async Task<IActionResult> TeacherStartPartial()
         {
-             var today = DateTime.Now;
+            var today = DateTime.Now;
+
+            var user = await userManager.GetUserAsync(User);
+            var role = await roleManager.FindByNameAsync("student");
+            var students = context.UserRoles.Where(user => user.RoleId == role.Id);
+
             IQueryable<Course> onGoing = context.Courses.Where(c => c.StartDate <= today && c.EndDate > today);
             IQueryable<Module> module = context.Modules.Where(m => m.StartDate <= today && m.EndDate > today);
             IQueryable<Course> past = context.Courses.Where(c => c.EndDate < today);
             IQueryable<Course> future = context.Courses.Where(c => c.StartDate >= today);
+            IQueryable<Document> assignments = context.Documents.Include(d => d.Course).Include(d => d.Module).Include(d => d.Activity).Include(d => d.User).Where(d => students.Any(s => s.UserId == d.UserId));
+
             var viewModel = new TeacherPageViewModel
             {
                 OnGoingCourses = onGoing?.ToList(),
                 onGoingModules = module?.ToList(),
                 pastCourses = past?.ToList(),
-                futureCourses = future?.ToList()
+                futureCourses = future?.ToList(),
+                Assignments = assignments?.ToList()
             };
             return View(viewModel);
         }

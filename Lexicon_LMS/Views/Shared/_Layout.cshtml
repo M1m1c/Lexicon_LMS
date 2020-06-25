@@ -21,7 +21,7 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container">
                 <picture class="float-left">
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <a class="navbar-brand" asp-area="" asp-controller="User" asp-action="Start">
                         <img style="width:110px; height:38px" src="~/img/logo-lexicon.gif" />
                     </a>
                 </picture>
@@ -60,6 +60,21 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            @if (TempData["UserMessage"] != null)
+            {
+                <div class="alert alert-success" id="success-alert">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Success! </strong>@TempData["UserMessage"]
+                </div>
+            }
+
+            @if (TempData["UserDismissMessage"] != null)
+            {
+                <div class="alert alert-warning" id="success-alert">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Failure! </strong>@TempData["UserDismissMessage"]
+                </div>
+            }
             @RenderBody()
         </main>
     </div>
@@ -75,10 +90,16 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/jquery-ajax-unobtrusive/dist/jquery.unobtrusive-ajax.js"></script>
+    <script>
+        $(function () {
+            $("#success-alert").hide();
+            $("#success-alert").fadeTo(4000, 500).slideUp(500, function () { $("#success-alert").slideUp(500); });
+        });
+    </script>
     @RenderSection("Scripts", required: false)
 
 
-    
+
 
 </body>
 </html>

@@ -46,7 +46,7 @@ namespace Lexicon_LMS
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ILookupService, LookupService>();
             services.AddMvc();
-
+            services.AddMvc().AddControllersAsServices();
 
             services.AddAutoMapper(typeof(MapperProfile));
          
@@ -78,7 +78,7 @@ namespace Lexicon_LMS
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=User}/{action=Start}/{id?}");
                 endpoints.MapRazorPages();
             });
         }

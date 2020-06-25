@@ -1,7 +1,17 @@
 ﻿@model Lexicon_LMS.ViewModels.Student.StudentStartViewModel
-<h3>Student</h3>
 
-<h5 class="mb-5">Course overview: @Model.CourseName</h5>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
+
+<h1 class="mb-5"><a asp-controller="Courses" asp-action="Details" asp-route-Id="@UserManager.GetUserAsync(User).Result.CourseId">@Model.CourseName</a></h1>
+@if (@Model.CurrentModule !=null)
+{
+<h3>
+    Current Module:
+    <a asp-controller="Courses" asp-action="Details" asp-route-moduleId="@Model.CurrentModule.Id" asp-route-id="@Model.CourseId">@Model.CurrentModule.ModuleName</a>
+</h3>
+}
+
 
 
 <div class="container">
@@ -10,9 +20,6 @@
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#oactivities">Ongoing Activites</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#omodules">Ongoing Modules</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#sassignments">Assignments</a>
@@ -40,11 +47,14 @@
 
                         @foreach (var activity in Model.OnGoingActivites)
                         {
-
-                            <li>
-                                <h5> <a asp-controller="Activity" asp-action="Details" asp-route-courseId="@Model.CourseId" asp-route-id="@activity.Id">@activity.ActivityName</a></h5>
-                            </li>
-
+                            if (activity.ActivityType != null)
+                            {
+                                <li class="row">
+                                    <h5 class="col-4"> <a asp-controller="Activity" asp-action="Details" asp-route-courseId="@Model.CourseId" asp-route-id="@activity.Id">@activity.ActivityName</a></h5>
+                                    <h5 class="col-4">@activity.ActivityType.Name</h5>
+                                </li>
+                                <hr />
+                            }
                         }
                     }
                     else
@@ -56,34 +66,7 @@
             </ul>
 
         </div>
-        <div id="omodules" class="container tab-pane fade">
-            <br>
-            <h3>OnGoing Modules</h3>
-            <ul>
-               
-                @if (Model != null)
-                {
-                    @if (Model.OnGoingModules.Count > 0)
-                    {
 
-                        @foreach (var item in Model.OnGoingModules)
-                        {
-                            //i++;
-                            <li>
-                                <h5> <a asp-controller="Courses" asp-action="Details" asp-route-moduleId="@item.Id" asp-route-id="@Model.CourseId">@item.ModuleName</a></h5>
-                            </li>
-
-                        }
-                    }
-                    else
-                    {
-                        <li>No ongoing modules</li>
-                    }
-                }
-
-            </ul>
-
-        </div>
         <div id="sassignments" class="container tab-pane fade">
             <br>
             <h3>Assignments</h3>
@@ -113,7 +96,7 @@
             <hr />
             <div class=" border-success ">
                 <ul>
-                   
+
                     @if (Model != null)
                     {
                         @if (Model.LateAssignments.Count() > 0)

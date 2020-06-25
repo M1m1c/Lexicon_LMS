@@ -9,30 +9,30 @@
 
 }
 
-    <h1> Course: @Model.CourseName</h1>
-    <h2> Module: @Model.ModuleName</h2>
+<h1> Course: @Model.CourseName</h1>
+<h2> Module: @Model.ModuleName</h2>
 <h3> Activity: @Html.DisplayFor(model => model.ActivityName)</h3>
 
 <div class="container">
     <div class="row">
         <div class="col">
             <dl class="row">
-                <dt class="col-sm-4">
+                <dt class="col-sm-6">
                     @Html.DisplayNameFor(model => model.ActivityTypeName)
                 </dt>
-                <dd class="col-sm-8">
+                <dd class="col-sm-6">
                     @Html.DisplayFor(model => model.ActivityTypeName)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-6">
                     @Html.DisplayNameFor(model => model.StartDate)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     @Html.DisplayFor(model => model.StartDate)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-6">
                     @Html.DisplayNameFor(model => model.EndDate)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     @Html.DisplayFor(model => model.EndDate)
                 </dd>
 
@@ -113,23 +113,12 @@
 
 @if (User.IsInRole("Teacher") || (User.IsInRole("Student") && Model.ActivityTypeName == "Assignment" && Model.MyStudentDocument == null))
 {
-    <form class="mb-5 mt-5 container"
-          asp-controller="Document"
-          asp-action="Create"
-          asp-route-holderId="@Model.Id"
-          asp-route-userId="@UserManager.GetUserId(User)"
-          asp-route-holderType="@activitytype"
-          asp-route-url="@Context.Request.Host@Context.Request.Path"
-          method="post"
-          enctype="multipart/form-data">
-
-        <div class="row mb-2">
-            <input class="btn btn-info" type="file" name="file" />
-        </div>
-        <div class="row">
-            <button class="btn btn-info" type="submit">Upload File</button>
-        </div>
-    </form>
+    <partial name="~/Views/Document/DocumentUploadPartial.cshtml"
+             view-data='@new ViewDataDictionary(ViewData){
+                     { "type", activitytype},
+                     {"userId",UserManager.GetUserId(User) },
+                     {"modelId",Model.Id },
+                     {"courseId", Model.CourseId}}' />
 }
 
 

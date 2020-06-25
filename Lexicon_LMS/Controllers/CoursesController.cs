@@ -22,12 +22,14 @@ namespace Lexicon_LMS.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly DocumentController _documentController;
 
-        public CoursesController(ApplicationDbContext context, IMapper mapper, IUnitOfWork unitOfWork)
+        public CoursesController(ApplicationDbContext context, IMapper mapper, IUnitOfWork unitOfWork, DocumentController documentController)
         {
             _context = context;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _documentController = documentController;
         }
 
         // GET: Courses
@@ -57,13 +59,13 @@ namespace Lexicon_LMS.Controllers
             }
             var model = await _unitOfWork.CourseRepository.GetDetailsViewModelAsync(id);
             model.Description = _context.Difficulties.Find(model.DifficultyId).Level;
-            model.Documents =_mapper.Map<ICollection<DocumentViewModel>>(_context.Documents.Where(d => d.CourseId == model.Id));
+            model.Documents = _mapper.Map<ICollection<DocumentViewModel>>(_context.Documents.Where(d => d.CourseId == model.Id));
 
             if (moduleId != null)
             {
                 model.ModuleId = moduleId;
             }
-         
+
             foreach (var mod in model.Modules)
             {
                 var activeties = await _context.Activities.Where(a => a.ModuleId == mod.Id).ToListAsync();
@@ -106,6 +108,7 @@ namespace Lexicon_LMS.Controllers
                 var course = _mapper.Map<Course>(model);
                 _unitOfWork.CourseRepository.Add(course);
                 await _unitOfWork.CompleateAsync();
+                TempData["UserMessage"] = $"Course: {model.CourseName} - was added.";
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
@@ -145,6 +148,7 @@ namespace Lexicon_LMS.Controllers
                 try
                 {
                     _context.Update(course);
+                    TempData["UserMessage"] = $"Course: {course.CourseName} - Saved changes.";
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -189,11 +193,44 @@ namespace Lexicon_LMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+
             var course = await _context.Courses.FindAsync(id);
-            _context.Courses.Remove(course);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var modules = _context.Modules.Where(m => m.CourseId == id);
+            var activities = _context.Activities.Where(a => modules.Any(m => m.Id == a.ModuleId));
+
+            var users = _context.Users.Where(u => u.CourseId == id);
+            foreach (var u in users)
+            {
+                _context.Remove(u);
+            }
+            //await _context.SaveChangesAsync();
+
+            var courseDocs = _context.Documents.Where(d => d.CourseId == id);
+            var moduleDocs = _context.Documents.Where(d => modules.Any(m => d.ModuleId == m.Id));
+            var activityDocs = _context.Documents.Where(d => activities.Any(a => d.ActivityId == a.Id));
+
+            List<Document> allDocs = new List<Document>();
+            allDocs.AddRange(courseDocs);
+            allDocs.AddRange(moduleDocs);
+            allDocs.AddRange(activityDocs);
+
+            var fileDeletionSuccess = await _documentController.CallDeletionOfFiles(allDocs);
+            if (fileDeletionSuccess == true)
+            {
+                _context.Courses.Remove(course);
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return NotFound();
+
+            //TempData["UserMessage"] = $"Course: {course.CourseName} - was deleted.";
+           
         }
+
+
 
         public IActionResult AddParticipant(int courseId)
         {
@@ -204,7 +241,7 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> ShowPaticipants(int? courseId)
         {
             var course = await _context.Courses.FindAsync(courseId);
-            if ( course == null)
+            if (course == null)
             {
                 return NotFound();
             }

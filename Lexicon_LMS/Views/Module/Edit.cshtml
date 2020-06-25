@@ -1,4 +1,4 @@
-﻿@model Lexicon_LMS.Models.ViewModels.ModuleViewModel
+﻿@model Lexicon_LMS.Models.ViewModels.ModuleEditViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -38,10 +38,21 @@
             </div>
         </form>
     </div>
+    <div class="col-md-4">
+        <h4>Unavailable dates</h4>
+        @foreach (var item in Model.UnavilableDates)
+        {
+            <div class="row">
+                <div class="col">
+                    <h5 class="text-danger">@item.ModuleName: @item.StartDate.ToShortDateString()  -|-  @item.EndDate.Date.ToShortDateString() </h5>
+                </div>
+            </div>
+        }
+    </div>
 </div>
-
+<hr />
 <div>
-    <a class="btn btn-warning" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId">Back to modules</a>
+    <a class="btn btn-warning" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId">Back</a>
 </div>
 
 @section Scripts {
