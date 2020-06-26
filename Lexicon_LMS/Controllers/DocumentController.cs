@@ -7,7 +7,7 @@ using AutoMapper;
 using Lexicon_LMS.Data;
 using Lexicon_LMS.Models;
 using Lexicon_LMS.Models.ViewModels;
-using Lexicon_LMS.ViewModels.Document;
+using Lexicon_LMS.Models.ViewModels.Document;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
